@@ -1,3 +1,27 @@
+%--------------------------------------------
+% Declarações iniciais
+
+% If single_var_warnings on, warnings are printed when a sentence containing variables not beginning with ‘_’ occurring once only is compiled or consulted.
+:- set_prolog_flag( discontiguous_warnings,off ).
+
+% If discontiguous_warnings on, warnings are printed when clauses are not together in source files, and the relevant predicate has not been declared discontiguous.
+:- set_prolog_flag( single_var_warnings,off ).
+
+% Dynamic module fail when it comes to an undefined predicate
+:- set_prolog_flag( unknown,fail ).
+
+%--------------------------------------------
+% Definições iniciais
+
+% op(Precedence, Type, Name)
+:- op( 900,xfy,'::' ).
+
+:- dynamic utente/4.
+:- dynamic prestador/4.
+:- dynamic cuidado/5.
+
+%--------------------------------------------
+
 # utente: #IdUt, Nome, Idade, Morada -> {V,F}
 
 # prestador: #IdPrest, Nome, Especialidade, Instituição -> {V,F}
