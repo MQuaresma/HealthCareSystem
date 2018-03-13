@@ -32,10 +32,12 @@ utente(4,joana,25,braga).
 % prestador: #IdPrest, Nome, Especialidade, Instituição -> {V,F}
 prestador(1,jose,pediatria,hospital_Braga).
 prestador(2,simao,oftalmologia,hospital_Lisboa).
+prestador(3,alfredo,medicina_Geral,hospital_Guimaraes).
 
 % cuidado: Data, #IdUt, #IdPrest, Descrição, Custo -> {V,F}
 cuidado(2016-05-23,1,1,consulta,20).
 cuidado(2017-03-04,2,2,consulta,32).
+cuidado(2017-05-20,1,3,consulta,15).
 
 %--------------------------------------------
 %Funcionalidades
@@ -47,14 +49,18 @@ solucoes(T,Q,S):-findall(T,Q,S).
 % Remover utentes, prestadores e cuidados de saúde
 
 % Identificar utentes por critérios de seleção
+% identificaUtente : nome, NomeUtente, Solução -> {V,F}
 identificaUtente(nome,Nome,S) :-
 		solucoes(utente(X,Nome,Y,Z),utente(X,Nome,Y,Z),S).
+% identificaUtente : idade, IdadeUtente, Solução -> {V,F}		
 identificaUtente(idade,Idade,S) :-
 		solucoes(utente(X,Y,Idade,Z),utente(X,Y,Idade,Z),S).
+% identificaUtente : morada, MoradaUtente, Solução -> {V,F}		
 identificaUtente(morada,Morada,S) :-
 		solucoes(utente(X,Y,Z,Morada),utente(X,Y,Z,Morada),S).
 
 % Identificar as instituições prestadoras de cuidados de saúde
+% identificaInstituicoes : Solução -> {V,F}
 identificaInstituicoes(S) :-
 		solucoes((I),(prestador(X,Y,Z,I)),S).
 
@@ -119,3 +125,16 @@ custoTotal(prestador,IdP,R):-
 custoTotal(datas,Data1,Data2 ,R):-
 		solucoes( C, (cuidado(Da,IdU,IdP,Desc,C), Da @< Data2, Data1 @< Da),Lista),
 		somaLista(Lista,R).
+
+%--------------------------------------------
+% Extras
+
+% Determinar as especialidades com que um utente esteve relacionado, devolvendo a data das mesmas.
+% especialidadesDeUtente : IdUtente, Solução -> {V,F}
+especialidadesDeUtente(IdU,S) :-
+		solucoes((Esp,Data),(utente(IdU,NomeU,IdadeU,Morada),prestador(IdP,X,Esp,Y),cuidado(Data,IdU,IdP,Z,W)),S).
+
+% Determinar os prestadores que cuidaram de um utente.
+% prestadoresDeUtenteEmInstituicao : IdUtente, Solução -> {V,F}
+prestadoresDeUtenteEmInstituicao(IdU,Inst,S) :-
+		solucoes(prestadores(IdP,NomeP,Esp,Inst),(utente(IdU,NomeU,IdadeU,Morada),prestador(IdP,NomeP,Esp,Inst),cuidado(Data,IdU,IdP,Desc,Custo)),S).
