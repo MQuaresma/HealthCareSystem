@@ -22,26 +22,38 @@
 
 %--------------------------------------------
 
-# utente: #IdUt, Nome, Idade, Morada -> {V,F}
+solucoes(T,Q,S):- Q, registar(tmp(T)), fail.
+solucoes(T,Q,S):- construir(S,[]).
+ 
+registar(T):- assert(T).
 
-# prestador: #IdPrest, Nome, Especialidade, Instituição -> {V,F}
+construir(LF,LI):- retract(tmp(T)), construir(LF,[T|LI]).
+construir(S,S).
 
-# cuidado: Data, #IdUt, #IdPrest, Descrição, Custo -> {V,F}
+% utente: #IdUt, Nome, Idade, Morada -> {V,F}
 
-# Registar utentes, prestadores e cuidados de saúde
+% prestador: #IdPrest, Nome, Especialidade, Instituição -> {V,F}
 
-# Remover utentes, prestadores e cuidados de saúde
+% cuidado: Data, #IdUt, #IdPrest, Descrição, Custo -> {V,F}
 
-# Identificar utentes por critérios de seleção
+% Registar utentes, prestadores e cuidados de saúde
 
-# Identificar as instituições prestadoras de cuidados de saúde
+% Remover utentes, prestadores e cuidados de saúde
 
-# Identificar cuidados de saúde prestados por instituição/cidade/datas
+% Identificar utentes por critérios de seleção
 
-# Identificar os utentes de um prestador/especialidade/instituição
+% Identificar as instituições prestadoras de cuidados de saúde
 
-# Identificar cuidados de saúde realizados por utente/instituição/prestador
+% Identificar cuidados de saúde prestados por instituição/cidade/datas
+identificaCuidados(Instituição,Ins,R):- 
+        Solucoes( cuidado(d,idU,IdP,des,c), (prestador(IdP,No,Esp,Ins), cuidado(d,idU,IdP,des,c)),R).
+#identificaCuidados(Cidade,):-
+#identificaCuidados(Data,):-
 
-# Determinar todas as instituições/prestadores a que um utente já recorreu
+% Identificar os utentes de um prestador/especialidade/instituição
 
-# Calcular o custo total dos cuidados de saúde por utente/especialidade/prestador/datas
+% Identificar cuidados de saúde realizados por utente/instituição/prestador
+
+% Determinar todas as instituições/prestadores a que um utente já recorreu
+
+% Calcular o custo total dos cuidados de saúde por utente/especialidade/prestador/datas
