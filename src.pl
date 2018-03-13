@@ -25,6 +25,8 @@
 
 utente(1,joao,23,porto).
 utente(2,maria,45,braga).
+utente(3,joao,45,setubal).
+utente(4,joana,25,braga).
 
 prestador(1,jose,pediatria,hospital_Braga).
 prestador(2,simao,oftalmologia,hospital_Lisboa).
@@ -47,6 +49,12 @@ solucoes(T,Q,S):-findall(T,Q,S).
 % Remover utentes, prestadores e cuidados de saúde
 
 % Identificar utentes por critérios de seleção
+identificaUtente(nome,Nome,S) :-
+		solucoes(utente(X,Nome,Y,Z),utente(X,Nome,Y,Z),S).
+identificaUtente(idade,Idade,S) :-
+		solucoes(utente(X,Y,Idade,Z),utente(X,Y,Idade,Z),S).
+identificaUtente(morada,Morada,S) :-
+		solucoes(utente(X,Y,Z,Morada),utente(X,Y,Z,Morada),S).
 
 % Identificar as instituições prestadoras de cuidados de saúde
 identificaInstituicoes(S) :-
