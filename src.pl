@@ -23,14 +23,14 @@
 %-------------------------------------------
 %Base de Conhecimento
 
-utente(1,Joao,23,Porto).
-utente(2,Maria,45,Braga).
+utente(1,joao,23,porto).
+utente(2,maria,45,braga).
 
-prestador(1,Jose,Pediatria,Hospital_Braga).
-prestador(2,Simao,Oftalmologia,Hospital_Lisboa).
+prestador(1,jose,pediatria,hospital_Braga).
+prestador(2,simao,oftalmologia,hospital_Lisboa).
 
-cuidado(Janeiro,1,1,Consulta,20).
-cuidado(Fevereiro,2,2,Consulta,32).
+cuidado(janeiro,1,1,consulta,20).
+cuidado(fevereiro,2,2,consulta,32).
 
 %--------------------------------------------
 
@@ -51,8 +51,8 @@ solucoes(T,Q,S):-findall(T,Q,S).
 % Identificar as instituições prestadoras de cuidados de saúde
 
 % Identificar cuidados de saúde prestados por instituição/cidade/datas
-identificaCuidados(Instituicao,Ins,R):- 
-        solucoes( Desc, (prestador(IdP,No,Esp,Ins), cuidado(Da,IdU,IdP,Desc,C)),R).
+identificaCuidados(instituicao,Ins,R):- 
+        solucoes( cuidado(Da,IdU,IdP,Desc,C), (cuidado(Da,IdU,IdP,Desc,C), prestador(IdP,No,Esp,Ins)),R).
 %identificaCuidados(Cidade,):-
 %identificaCuidados(Data,):-
 
