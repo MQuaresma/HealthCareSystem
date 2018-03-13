@@ -49,6 +49,8 @@ solucoes(T,Q,S):-findall(T,Q,S).
 % Identificar utentes por critérios de seleção
 
 % Identificar as instituições prestadoras de cuidados de saúde
+identificaInstituicoes(S) :-
+		solucoes((I),(prestador(X,Y,Z,I)),S).
 
 % Identificar cuidados de saúde prestados por instituição/cidade/datas
 identificaCuidados(instituicao,Ins,R):- 
