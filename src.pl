@@ -29,8 +29,8 @@ utente(2,maria,45,braga).
 prestador(1,jose,pediatria,hospital_Braga).
 prestador(2,simao,oftalmologia,hospital_Lisboa).
 
-cuidado(janeiro,1,1,consulta,20).
-cuidado(fevereiro,2,2,consulta,32).
+cuidado(2016-05-23,1,1,consulta,20).
+cuidado(2017-03-04,2,2,consulta,32).
 
 %--------------------------------------------
 
@@ -55,8 +55,10 @@ identificaInstituicoes(S) :-
 % Identificar cuidados de saúde prestados por instituição/cidade/datas
 identificaCuidados(instituicao,Ins,R):- 
         solucoes( cuidado(Da,IdU,IdP,Desc,C), (cuidado(Da,IdU,IdP,Desc,C), prestador(IdP,No,Esp,Ins)),R).
-%identificaCuidados(Cidade,):-
-%identificaCuidados(Data,):-
+identificaCuidados(cidade,Cid,R):-
+        solucoes( cuidado(Da,IdU,IdP,Desc,C), (cuidado(Da,IdU,IdP,Desc,C), utente(IdU,No,Id,Cid)),R).
+identificaCuidados(datas,Data1,Data2,R):-
+        solucoes( cuidado(Da,IdU,IdP,Desc,C), (cuidado(Da,IdU,IdP,Desc,C), Da @< Data2, Data1 @< Da),R).
 
 % Identificar os utentes de um prestador/especialidade/instituição
 
