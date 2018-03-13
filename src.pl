@@ -23,24 +23,22 @@
 %-------------------------------------------
 %Base de Conhecimento
 
+% utente: #IdUt, Nome, Idade, Morada -> {V,F}
 utente(1,joao,23,porto).
 utente(2,maria,45,braga).
 
+% prestador: #IdPrest, Nome, Especialidade, Instituição -> {V,F}
 prestador(1,jose,pediatria,hospital_Braga).
 prestador(2,simao,oftalmologia,hospital_Lisboa).
 
+% cuidado: Data, #IdUt, #IdPrest, Descrição, Custo -> {V,F}
 cuidado(2016-05-23,1,1,consulta,20).
 cuidado(2017-03-04,2,2,consulta,32).
 
 %--------------------------------------------
+%Funcionalidades
 
 solucoes(T,Q,S):-findall(T,Q,S).
-
-% utente: #IdUt, Nome, Idade, Morada -> {V,F}
-
-% prestador: #IdPrest, Nome, Especialidade, Instituição -> {V,F}
-
-% cuidado: Data, #IdUt, #IdPrest, Descrição, Custo -> {V,F}
 
 % Registar utentes, prestadores e cuidados de saúde
 
@@ -53,14 +51,26 @@ identificaInstituicoes(S) :-
 		solucoes((I),(prestador(X,Y,Z,I)),S).
 
 % Identificar cuidados de saúde prestados por instituição/cidade/datas
-identificaCuidados(instituicao,Ins,R):- 
-        solucoes( cuidado(Da,IdU,IdP,Desc,C), (cuidado(Da,IdU,IdP,Desc,C), prestador(IdP,No,Esp,Ins)),R).
-identificaCuidados(cidade,Cid,R):-
-        solucoes( cuidado(Da,IdU,IdP,Desc,C), (cuidado(Da,IdU,IdP,Desc,C), utente(IdU,No,Id,Cid)),R).
-identificaCuidados(datas,Data1,Data2,R):-
-        solucoes( cuidado(Da,IdU,IdP,Desc,C), (cuidado(Da,IdU,IdP,Desc,C), Da @< Data2, Data1 @< Da),R).
+% identCuiPrest : instituicao, Instituicao, Resultado -> {V,F}
+identCuidPrest(instituicao,Ins,R):- 
+        solucoes( Esp, prestador(IdP,No,Esp,Ins),R).
+% identCuiPrest : cidade, Cidade, Resultado -> {V,F}
+identCuidPrest(cidade,Cid,R):-
+        solucoes( Esp, (cuidado(Da,IdU,IdP,Desc,C), utente(IdU,NoU,Id,Cid), prestador(IdP,NoP,Esp,Ins)),R).
+% identCuiPrest : datas, Data, Data, Resultado -> {V,F}
+identCuidPrest(datas,Data1,Data2,R):-
+        solucoes( Esp, (prestador(IdP,No,Esp,Ins), cuidado(Da,IdU,IdP,Desc,C), Da @< Data2, Data1 @< Da),R).
 
 % Identificar os utentes de um prestador/especialidade/instituição
+% identUtentes : prestador, Nome, Resultado -> {V,F}
+identUtentes(prestador,PrestadorNome,R):-
+        solucoes( NoU, (prestador(IdP,PrestadorNome,Esp,Ins), cuidado(Da,IdU,IdP,Desc,C), utente(IdU,NoU,Id,Cid)),R).
+% identUtentes : especialidade, Especialidade, Resultado -> {V,F}
+identUtentes(especialidade,Espec,R):-
+        solucoes( NoU, (prestador(IdP,NoP,Espec,Ins), cuidado(Da,IdU,IdP,Desc,C), utente(IdU,NoU,Id,Cid)),R).
+% identUtentes : instituicao, Instituicao, Resultado -> {V,F}
+identUtentes(instituicao,Ins,R):-
+        solucoes( NoU, (prestador(IdP,NoP,Esp,Ins), cuidado(Da,IdU,IdP,Desc,C), utente(IdU,NoU,Id,Cid)),R).
 
 % Identificar cuidados de saúde realizados por utente/instituição/prestador
 
