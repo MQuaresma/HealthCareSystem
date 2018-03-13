@@ -20,6 +20,18 @@
 :- dynamic prestador/4.
 :- dynamic cuidado/5.
 
+%-------------------------------------------
+%Base de Conhecimento
+
+utente(1,"Joao Vaz",23,"São João do Monte").
+utente(2,"Maria Fonseca",45,"Braga, Portugal").
+
+prestador(1,"José Paiva",33,"Pediatria","Hospital de Braga").
+prestador(2,"Simão Carvalho",56,"Oftalmologia","Hospital de Lisboa").
+
+cuidado("2016-05-23",1,1,"Consulta",20).
+cuidado("2017-03-12",2,2,"Consulta",32).
+
 %--------------------------------------------
 
 solucoes(T,Q,S):- Q, registar(tmp(T)), fail.
@@ -45,10 +57,10 @@ construir(S,S).
 % Identificar as instituições prestadoras de cuidados de saúde
 
 % Identificar cuidados de saúde prestados por instituição/cidade/datas
-identificaCuidados(Instituição,Ins,R):- 
-        Solucoes( cuidado(d,idU,IdP,des,c), (prestador(IdP,No,Esp,Ins), cuidado(d,idU,IdP,des,c)),R).
-#identificaCuidados(Cidade,):-
-#identificaCuidados(Data,):-
+identificaCuidados(Instituicao,Ins,R):- 
+        solucoes( cuidado(d,idU,IdP,des,c), (prestador(IdP,No,Esp,Ins), cuidado(d,idU,IdP,des,c)),R).
+%identificaCuidados(Cidade,):-
+%identificaCuidados(Data,):-
 
 % Identificar os utentes de um prestador/especialidade/instituição
 
