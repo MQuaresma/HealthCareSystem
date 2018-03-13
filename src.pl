@@ -71,7 +71,41 @@ identificaCuidados(datas,Data1,Data2,R):-
 % Identificar os utentes de um prestador/especialidade/instituição
 
 % Identificar cuidados de saúde realizados por utente/instituição/prestador
+identificaCuidadosRealizados(utente,IdU,R):-
+        solucoes( cuidado(Da,IdU,IdP,Desc,C), cuidado(Da,IdU,IdP,Desc,C),R).
+
+identificaCuidadosRealizados(instituicao,Ins,R):-
+        solucoes( cuidado(Da,IdU,IdP,Desc,C), (cuidado(Da,IdU,IdP,Desc,C), prestador(IdP,No,Esp,Ins)),R).
+
+identificaCuidadosRealizados(prestador,IdP,R):-
+        solucoes( cuidado(Da,IdU,IdP,Desc,C), cuidado(Da,IdU,IdP,Desc,C),R).
 
 % Determinar todas as instituições/prestadores a que um utente já recorreu
-
+porUtente(instituicao,IdU,R):-
+		solucoes( Ins, (cuidado(Da,IdU,IdP,Desc,C), prestador(IdP,No,Esp,Ins)),R).
+porUtente(prestador,IdU,R):-
+		solucoes( (IdP,No), (cuidado(Da,IdU,IdP,Desc,C), prestador(IdP,No,Esp,Ins)),R).
 % Calcular o custo total dos cuidados de saúde por utente/especialidade/prestador/datas
+
+%funçao auxiliar para somar uma lista
+somaLista([],0).
+somaLista([X],X).
+somaLista([X|L],N):-  
+         somaLista(L,N1),
+         N is X + N1.
+
+custoTotal(utente,IdU,R):-
+		solucoes( C, cuidado(Da,IdU,IdP,Desc,C),Lista),
+		somaLista(Lista,R).
+
+custoTotal(especialidade,Esp,R):-
+		solucoes( C, (cuidado(Da,IdU,IdP,Desc,C), prestador(IdP,No,Esp,Ins)),Lista),
+		somaLista(Lista,R).
+
+custoTotal(prestador,IdP,R):-
+		solucoes( C, cuidado(Da,IdU,IdP,Desc,C),Lista), %quando é adicionado um cuidado é verificado se o prestador existe certo? logo pode-se fazer assim, faço o mesmo em cima 
+		somaLista(Lista,R).
+
+custoTotal(datas,Data1,Data2 ,R):-
+		solucoes( C, (cuidado(Da,IdU,IdP,Desc,C), Da @< Data2, Data1 @< Da),Lista),
+		somaLista(Lista,R).
