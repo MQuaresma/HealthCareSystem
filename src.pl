@@ -23,24 +23,18 @@
 %-------------------------------------------
 %Base de Conhecimento
 
-utente(1,"Joao Vaz",23,"São João do Monte").
-utente(2,"Maria Fonseca",45,"Braga, Portugal").
+utente(1,Joao,23,Porto).
+utente(2,Maria,45,Braga).
 
-prestador(1,"José Paiva",33,"Pediatria","Hospital de Braga").
-prestador(2,"Simão Carvalho",56,"Oftalmologia","Hospital de Lisboa").
+prestador(1,Jose,Pediatria,Hospital_Braga).
+prestador(2,Simao,Oftalmologia,Hospital_Lisboa).
 
-cuidado("2016-05-23",1,1,"Consulta",20).
-cuidado("2017-03-12",2,2,"Consulta",32).
+cuidado(Janeiro,1,1,Consulta,20).
+cuidado(Fevereiro,2,2,Consulta,32).
 
 %--------------------------------------------
 
-solucoes(T,Q,S):- Q, registar(tmp(T)), fail.
-solucoes(T,Q,S):- construir(S,[]).
- 
-registar(T):- assert(T).
-
-construir(LF,LI):- retract(tmp(T)), construir(LF,[T|LI]).
-construir(S,S).
+solucoes(T,Q,S):-findall(T,Q,S).
 
 % utente: #IdUt, Nome, Idade, Morada -> {V,F}
 
@@ -58,7 +52,7 @@ construir(S,S).
 
 % Identificar cuidados de saúde prestados por instituição/cidade/datas
 identificaCuidados(Instituicao,Ins,R):- 
-        solucoes( cuidado(d,idU,IdP,des,c), (prestador(IdP,No,Esp,Ins), cuidado(d,idU,IdP,des,c)),R).
+        solucoes( Desc, (prestador(IdP,No,Esp,Ins), cuidado(Da,IdU,IdP,Desc,C)),R).
 %identificaCuidados(Cidade,):-
 %identificaCuidados(Data,):-
 
