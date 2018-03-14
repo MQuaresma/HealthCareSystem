@@ -45,8 +45,18 @@ cuidado(2017-05-20,1,3,consulta,15).
 solucoes(T,Q,S):-findall(T,Q,S).
 
 % Registar utentes, prestadores e cuidados de saúde
+registarUtente(Id,Nome,Idade,Morada):-evolucao(utente(Id,Nome,Idade,Morada)).
+
+registarPrestador(Id,Nome,Esp,Inst):-evolucao(prestador(Id,Nome,Esp,Inst)).
+
+registarCuidado(Data,IdU,IdPrest,Desc,Custo):-evolucao(cuidado(Data,IdU,IdPrest,Desc,Custo)).
 
 % Remover utentes, prestadores e cuidados de saúde
+removerUtente(Id,Nome,Idade,Morada):-involucao(utente(Id,Nome,Idade,Morada)).
+
+removerPrestador(Id,Nome,Esp,Inst):-involucao(prestador(Id,Nome,Esp,Inst)).
+
+removerCuidado(Data,IdU,IdPrest,Desc,Custo):-involucao(cuidado(Data,IdU,IdPrest,Desc,Custo)).
 
 % Identificar utentes por critérios de seleção
 % identificaUtente : nome, NomeUtente, Solução -> {V,F}
@@ -127,7 +137,65 @@ custoTotal(datas,Data1,Data2 ,R):-
 		somaLista(Lista,R).
 
 %--------------------------------------------
-% Extras
+%Invariantes estruturais
+%Utente com Id nao existe/repetido
++utente(Id,Nome,Idade,Morada)::(solucoes((X,Y,Z),utente(Id,X,Y,Z),S),
+                                len(S,N),
+                                N=<1).
+%Prestador com Id nao existe/repetido
++prestador(Id,Nome,Esp,Inst)::(solucoes((X,Y,Z),prestador(Id,X,Y,Z),S),
+                                len(S,N),
+                                N=<1).
+%Cuidado nao existe/repetido
++cuidado(Data,IdU,IdP,Desc,Custo)::(solucoes((Data,IdU,IdP,Desc,Custo),cuidado(Data,IdU,IdP,Desc,Custo),S),
+                                len(S,N),
+                                N=<1).
+
+%Utente existe
++cuidado(Data,IdU,IdP,Desc,Custo)::(solucoes((X,Y,Z),utente(IdU,X,Y,Z),S),
+                                    len(S,N),
+                                    N>=1).
+
+%Prestador existe
++cuidado(Data,IdU,IdP,Desc,Custo)::(solucoes((X,Y,Z),prestador(IdP,X,Y,Z),S),
+                                    len(S,N),
+                                    N>=1).
+
+%Nao existem cuidados referentes a utente
+-utente(Id,Nome,Idade,Morada)::(solucoes((Data,IdP,Desc,Custo),cuidado(Data,Id,IdP,Desc,Custo),S),
+                                len(S,N),
+                                N=<1).
+
+%Nao existem cuidados referentes a prestador
+-prestador(Id,Nome,Esp,Inst)::(solucoes((Data,IdU,Desc,Custo),cuidado(Data,IdU,Id,Desc,Custo),S),
+                                len(S,N),
+                                N=<1).
+%--------------------------------------------
+%Extensao do predicado que permite a evolucao/involucao do conhecimento
+
+inserir(P):-assert(P).
+inserir(P):-retract(P),!,fail.
+
+remover(P):-retract(P).
+remover(P):-assert(P),!,fail.
+
+test([]).
+test([H|T]):-H,test(T).
+
+len(S,N):-length(S,N).
+
+evolucao(Termo):-
+    solucoes(Inv,+Termo::Inv,S),
+    inserir(Termo),
+    test(S).
+
+involucao(Termo):-
+    solucoes(Inv,-Termo::Inv,S),
+    remover(Termo),
+    test(S).
+
+%--------------------------------------------
+%Extras
 
 % Determinar as especialidades com que um utente esteve relacionado, devolvendo a data das mesmas.
 % especialidadesDeUtente : IdUtente, Solução -> {V,F}
