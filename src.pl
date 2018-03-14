@@ -19,6 +19,7 @@
 :- dynamic utente/4.
 :- dynamic prestador/4.
 :- dynamic cuidado/5.
+:- dynamic instituicao/4.
 
 %-------------------------------------------
 %Base de Conhecimento
@@ -39,24 +40,31 @@ cuidado(2016-05-23,1,1,consulta,20).
 cuidado(2017-03-04,2,2,consulta,32).
 cuidado(2017-05-20,1,3,consulta,15).
 
+%Adicional
+% instituicao: id, nome, tipo, cidade
+
 %--------------------------------------------
 %Funcionalidades
 
 solucoes(T,Q,S):-findall(T,Q,S).
 
-% Registar utentes, prestadores e cuidados de saúde
+% Registar utentes, prestadores e cuidados de saúde,instituicoes
 registarUtente(Id,Nome,Idade,Morada):-evolucao(utente(Id,Nome,Idade,Morada)).
 
 registarPrestador(Id,Nome,Esp,Inst):-evolucao(prestador(Id,Nome,Esp,Inst)).
 
 registarCuidado(Data,IdU,IdPrest,Desc,Custo):-evolucao(cuidado(Data,IdU,IdPrest,Desc,Custo)).
 
-% Remover utentes, prestadores e cuidados de saúde
+registarInstituicao(Id,Nome,Tipo,Cidade):-evolucao(instituicao(Id,Nome,Tipo,Cidade)).
+
+% Remover utentes, prestadores e cuidados de saúde,instituicoes
 removerUtente(Id,Nome,Idade,Morada):-involucao(utente(Id,Nome,Idade,Morada)).
 
 removerPrestador(Id,Nome,Esp,Inst):-involucao(prestador(Id,Nome,Esp,Inst)).
 
 removerCuidado(Data,IdU,IdPrest,Desc,Custo):-involucao(cuidado(Data,IdU,IdPrest,Desc,Custo)).
+
+removerInstituicao(Id,Nome,Tipo,Cidade):-involucao(instituicao(Id,Nome,Tipo,Cidade)).
 
 % Identificar utentes por critérios de seleção
 % identificaUtente : nome, NomeUtente, Solução -> {V,F}
@@ -146,6 +154,12 @@ custoTotal(datas,Data1,Data2 ,R):-
 +prestador(Id,Nome,Esp,Inst)::(solucoes((X,Y,Z),prestador(Id,X,Y,Z),S),
                                 len(S,N),
                                 N=<1).
+
+%Prestador pertence a instituicao valida
++prestador(Id,Nome,Esp,Inst)::(solucoes((IdI,TipoI,CidadeI),instituicao(IdI,Inst,TipoI,CidadeI),S),
+                                len(S,N),
+                                N>=1).
+
 %Cuidado nao existe/repetido
 +cuidado(Data,IdU,IdP,Desc,Custo)::(solucoes((Data,IdU,IdP,Desc,Custo),cuidado(Data,IdU,IdP,Desc,Custo),S),
                                 len(S,N),
@@ -161,6 +175,11 @@ custoTotal(datas,Data1,Data2 ,R):-
                                     len(S,N),
                                     N>=1).
 
+%Instituicao com Id nao existe/repetido
++instituicao(Id,Nome,Tipo,Cidade)::(solucoes((Nome,Tipo,Cidade),instituicao(Id,Nome,Tipo,Cidade),S),
+                                    len(S,N),
+                                    N=<1).
+
 %Nao existem cuidados referentes a utente
 -utente(Id,Nome,Idade,Morada)::(solucoes((Data,IdP,Desc,Custo),cuidado(Data,Id,IdP,Desc,Custo),S),
                                 len(S,N),
@@ -170,6 +189,11 @@ custoTotal(datas,Data1,Data2 ,R):-
 -prestador(Id,Nome,Esp,Inst)::(solucoes((Data,IdU,Desc,Custo),cuidado(Data,IdU,Id,Desc,Custo),S),
                                 len(S,N),
                                 N=<1).
+
+%Nao existem prestadores resgistados nesta instituicao
+-instituicao(Id,Nome,Tipo,Cidade):-(solucoes((IdP,NomeP,Esp),prestador(IdP,NomeP,Esp,Nome),S),
+                                    len(S,N),
+                                    N=<1).
 %--------------------------------------------
 %Extensao do predicado que permite a evolucao/involucao do conhecimento
 
