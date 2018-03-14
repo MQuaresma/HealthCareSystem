@@ -54,12 +54,12 @@ cuidado(2016-08-30,6,5,consulta,16).
 
 %Adicional
 % instituicao: id, nome, tipo, cidade
-instituicao(1,hospital_Braga,hospital,Braga).
-instituicao(2,hospital_Lisboa,hospital,Lisboa).
-instituicao(3,hospital_Guimaraes,hospital,Guimaraes).
-instituicao(4,hospital_Coimbra,hospital,Coimbra).
-instituicao(5,centro_Caranda,centro_de_saude,Braga).
-instituicao(6,clinica_SantaTecla,clinica,Braga).
+instituicao(1,hospital_Braga,hospital,braga).
+instituicao(2,hospital_Lisboa,hospital,lisboa).
+instituicao(3,hospital_Guimaraes,hospital,guimaraes).
+instituicao(4,hospital_Coimbra,hospital,coimbra).
+instituicao(5,centro_Caranda,centro_de_saude,braga).
+instituicao(6,clinica_SantaTecla,clinica,braga).
 
 %--------------------------------------------
 %Funcionalidades
