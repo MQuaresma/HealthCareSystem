@@ -250,12 +250,12 @@ especialidadesDeUtente(IdU,S) :-
 %Determinar os prestadores que cuidaram de um utente.
 %prestadoresDeUtenteEmInstituicao : IdUtente, Solução -> {V,F}
 prestadoresDeUtenteEmInstituicao(IdU,Inst,S) :-
-		solucoes(prestadores(IdP,NomeP,Esp,Inst),(utente(IdU,NomeU,IdadeU,Morada),prestador(IdP,NomeP,Esp,Inst),cuidado(Data,IdU,IdP,Desc,Custo)),S).
+		solucoes(NomeP,(utente(IdU,NomeU,IdadeU,Morada),prestador(IdP,NomeP,Esp,Inst),cuidado(Data,IdU,IdP,Desc,Custo)),S).
 
 %Determinar as instituições existentes cidade.
 %instituicoesDeCidade : Cidade, Solução -> {V,F}
 instituicoesDeCidade(Cidade,S) :-
-        solucoes(instituicao(IdI,NomeI,TipoI,Cidade),instituicao(IdI,NomeI,TipoI,Cidade),S).
+        solucoes(NomeI,instituicao(IdI,NomeI,TipoI,Cidade),S).
 
 %Determinar os tipos de instituições existentes numa cidade.
 %tiposDeInstituicoesDeCidade : Cidade, Solução -> {V,F}
@@ -268,8 +268,11 @@ tiposInstituicoesVisitadasPorUtente(IdU,S) :-
         solucoes(TipoI,(utente(IdU,NomeU,IdadeU,Morada),prestador(IdP,NomeP,Esp,Inst),cuidado(Data,IdU,IdP,Desc,Custo),instituicao(IdI,Inst,TipoI,Cidade)),S).
 
 %Que instituiçoes sao hospitais/clinicas/centros de saude
+%instituicoesDoTipo : Tipo, Solução -> {V,F}
+instituicoesDoTipo(Tipo,S):-
+        solucoes(NomeI,instituicao(IdI,NomeI,Tipo,Ci),S).
 
-%Em que cidade foram prestados mais cuidados realizados
+%Em que cidade foram mais cuidados realizados
 
 %Qual a instituiçao com mais cuidados realizados
 
