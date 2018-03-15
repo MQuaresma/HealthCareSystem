@@ -42,6 +42,7 @@ prestador(2,simao,oftalmologia,hospital_Lisboa).
 prestador(3,alfredo,medicina_Geral,hospital_Guimaraes).
 prestador(4,margarida,enfermagem,hospital_Coimbra).
 prestador(5,antonio,medicina_Geral,hospital_Coimbra).
+prestador(6,mafalda,ortopedia,clinica_SantaTecla).
 
 % cuidado: Data, #IdUt, #IdPrest, Descrição, Custo -> {V,F}
 cuidado(2016-05-23,1,1,consulta,20).
@@ -51,6 +52,7 @@ cuidado(2017-02-14,3,5,consulta,14).
 cuidado(2016-11-01,7,4,consulta,10).
 cuidado(2017-09-27,8,2,consulta,24).
 cuidado(2016-08-30,6,5,consulta,16).
+cuidado(2017-01-20,1,6,consulta,10).
 
 %Adicional
 % instituicao: id, nome, tipo, cidade
@@ -250,7 +252,20 @@ especialidadesDeUtente(IdU,S) :-
 prestadoresDeUtenteEmInstituicao(IdU,Inst,S) :-
 		solucoes(prestadores(IdP,NomeP,Esp,Inst),(utente(IdU,NomeU,IdadeU,Morada),prestador(IdP,NomeP,Esp,Inst),cuidado(Data,IdU,IdP,Desc,Custo)),S).
 
-%Que instituiçoes são da cidade X
+%Determinar as instituições existentes cidade.
+%instituicoesDeCidade : Cidade, Solução -> {V,F}
+instituicoesDeCidade(Cidade,S) :-
+        solucoes(instituicao(IdI,NomeI,TipoI,Cidade),instituicao(IdI,NomeI,TipoI,Cidade),S).
+
+%Determinar os tipos de instituições existentes numa cidade.
+%tiposDeInstituicoesDeCidade : Cidade, Solução -> {V,F}
+tiposDeInstituicoesDeCidade(Cidade,S) :-
+        solucoes(TipoI,instituicao(IdI,NomeI,TipoI,Cidade),S).
+
+%Determinar o tipo de instituições que um utente já visitou.
+%tiposInstituicoesVisitadasPorUtente : IdUtente, Solução -> {V,F}
+tiposInstituicoesVisitadasPorUtente(IdU,S) :-
+        solucoes(TipoI,(utente(IdU,NomeU,IdadeU,Morada),prestador(IdP,NomeP,Esp,Inst),cuidado(Data,IdU,IdP,Desc,Custo),instituicao(IdI,Inst,TipoI,Cidade)),S).
 
 %Que instituiçoes sao hospitais/clinicas/centros de saude
 
@@ -261,7 +276,5 @@ prestadoresDeUtenteEmInstituicao(IdU,Inst,S) :-
 %Que utente tem mais cuidados realizados
 
 %Que prestador prestou mais cuidados
-
-%A que tipo de instituiçoes o utente já visitou
 
 %Em que instituição o utente realizou mais cuidados
