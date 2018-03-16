@@ -1,4 +1,4 @@
-%--------------------------------------------
+%--------------------------------------------------------------------------------------------
 % Declarações iniciais
 
 % If single_var_warnings on, warnings are printed when a sentence containing variables not beginning with ‘_’ occurring once only is compiled or consulted.
@@ -10,7 +10,7 @@
 % Dynamic module fail when it comes to an undefined predicate
 :- set_prolog_flag( unknown,fail ).
 
-%--------------------------------------------
+%--------------------------------------------------------------------------------------------
 % Definições iniciais
 
 % op(Precedence, Type, Name)
@@ -21,7 +21,7 @@
 :- dynamic cuidado/5.
 :- dynamic instituicao/4.
 
-%-------------------------------------------
+%--------------------------------------------------------------------------------------------
 %Base de Conhecimento
 
 % utente: #IdUt, Nome, Idade, Morada -> {V,F}
@@ -63,12 +63,12 @@ instituicao(4,hospital_Coimbra,hospital,coimbra).
 instituicao(5,centro_Caranda,centro_de_saude,braga).
 instituicao(6,clinica_SantaTecla,clinica,braga).
 
-%--------------------------------------------
+%--------------------------------------------------------------------------------------------
 %Funcionalidades
 
-solucoes(T,Q,S):-findall(T,Q,S).
-
+%--------------------------------------------------------------------------------------------
 %Registar utentes, prestadores e cuidados de saúde,instituicoes
+
 registarUtente(Id,Nome,Idade,Morada):-evolucao(utente(Id,Nome,Idade,Morada)).
 
 registarPrestador(Id,Nome,Esp,Inst):-evolucao(prestador(Id,Nome,Esp,Inst)).
@@ -77,7 +77,9 @@ registarCuidado(Data,IdU,IdPrest,Desc,Custo):-evolucao(cuidado(Data,IdU,IdPrest,
 
 registarInstituicao(Id,Nome,Tipo,Cidade):-evolucao(instituicao(Id,Nome,Tipo,Cidade)).
 
+%--------------------------------------------------------------------------------------------
 %Remover utentes, prestadores e cuidados de saúde,instituicoes
+
 removerUtente(Id,Nome,Idade,Morada):-involucao(utente(Id,Nome,Idade,Morada)).
 
 removerPrestador(Id,Nome,Esp,Inst):-involucao(prestador(Id,Nome,Esp,Inst)).
@@ -86,45 +88,61 @@ removerCuidado(Data,IdU,IdPrest,Desc,Custo):-involucao(cuidado(Data,IdU,IdPrest,
 
 removerInstituicao(Id,Nome,Tipo,Cidade):-involucao(instituicao(Id,Nome,Tipo,Cidade)).
 
+%--------------------------------------------------------------------------------------------
 %Identificar utentes por critérios de seleção
+
 %identificaUtente : nome, NomeUtente, Solução -> {V,F}
 identificaUtente(nome,Nome,S) :-
 		solucoes(utente(X,Nome,Y,Z),utente(X,Nome,Y,Z),S).
+
 %identificaUtente : idade, IdadeUtente, Solução -> {V,F}		
 identificaUtente(idade,Idade,S) :-
 		solucoes(utente(X,Y,Idade,Z),utente(X,Y,Idade,Z),S).
+
 %identificaUtente : morada, MoradaUtente, Solução -> {V,F}		
 identificaUtente(morada,Morada,S) :-
 		solucoes(utente(X,Y,Z,Morada),utente(X,Y,Z,Morada),S).
 
+%--------------------------------------------------------------------------------------------
 %Identificar as instituições prestadoras de cuidados de saúde
+
 %identificaInstituicoes : Solução -> {V,F}
 identificaInstituicoes(S) :-
 		solucoes((I),(prestador(X,Y,Z,I)),S).
 
+%--------------------------------------------------------------------------------------------
 %Identificar cuidados de saúde prestados por instituição/cidade/datas
+
 %identCuiPrest : instituicao, Instituicao, Resultado -> {V,F}
 identCuidPrest(instituicao,Ins,R):- 
         solucoes( Esp, prestador(IdP,No,Esp,Ins),R).
+
 %identCuiPrest : cidade, Cidade, Resultado -> {V,F}
 identCuidPrest(cidade,Cid,R):-
         solucoes( Esp, (cuidado(Da,IdU,IdP,Desc,C), utente(IdU,NoU,Id,Cid), prestador(IdP,NoP,Esp,Ins)),R).
+
 %identCuiPrest : datas, Data, Data, Resultado -> {V,F}
 identCuidPrest(datas,Data1,Data2,R):-
         solucoes( Esp, (prestador(IdP,No,Esp,Ins), cuidado(Da,IdU,IdP,Desc,C), Da @< Data2, Data1 @< Da),R).
 
+%--------------------------------------------------------------------------------------------
 %Identificar os utentes de um prestador/especialidade/instituição
+
 %identUtentes : prestador, Nome, Resultado -> {V,F}
 identUtentes(prestador,PrestadorNome,R):-
         solucoes( NoU, (prestador(IdP,PrestadorNome,Esp,Ins), cuidado(Da,IdU,IdP,Desc,C), utente(IdU,NoU,Id,Cid)),R).
+
 %identUtentes : especialidade, Especialidade, Resultado -> {V,F}
 identUtentes(especialidade,Espec,R):-
         solucoes( NoU, (prestador(IdP,NoP,Espec,Ins), cuidado(Da,IdU,IdP,Desc,C), utente(IdU,NoU,Id,Cid)),R).
+
 %identUtentes : instituicao, Instituicao, Resultado -> {V,F}
 identUtentes(instituicao,Ins,R):-
         solucoes( NoU, (prestador(IdP,NoP,Esp,Ins), cuidado(Da,IdU,IdP,Desc,C), utente(IdU,NoU,Id,Cid)),R).
 
+%--------------------------------------------------------------------------------------------
 %Identificar cuidados de saúde realizados por utente/instituição/prestador
+
 identificaCuidadosRealizados(utente,IdU,R):-
         solucoes( cuidado(Da,IdU,IdP,Desc,C), cuidado(Da,IdU,IdP,Desc,C),R).
 
@@ -134,20 +152,17 @@ identificaCuidadosRealizados(instituicao,Ins,R):-
 identificaCuidadosRealizados(prestador,IdP,R):-
         solucoes( cuidado(Da,IdU,IdP,Desc,C), cuidado(Da,IdU,IdP,Desc,C),R).
 
+%--------------------------------------------------------------------------------------------
 %Determinar todas as instituições/prestadores a que um utente já recorreu
+
 porUtente(instituicao,IdU,R):-
 		solucoes( Ins, (cuidado(Da,IdU,IdP,Desc,C), prestador(IdP,No,Esp,Ins)),R).
+
 porUtente(prestador,IdU,R):-
 		solucoes( (IdP,No), (cuidado(Da,IdU,IdP,Desc,C), prestador(IdP,No,Esp,Ins)),R).
 
+%--------------------------------------------------------------------------------------------
 %Calcular o custo total dos cuidados de saúde por utente/especialidade/prestador/datas
-
-%funçao auxiliar para somar uma lista
-somaLista([],0).
-somaLista([X],X).
-somaLista([X|L],N):-  
-         somaLista(L,N1),
-         N is X + N1.
 
 custoTotal(utente,IdU,R):-
 		solucoes( C, cuidado(Da,IdU,IdP,Desc,C),Lista),
@@ -165,12 +180,14 @@ custoTotal(datas,Data1,Data2 ,R):-
 		solucoes( C, (cuidado(Da,IdU,IdP,Desc,C), Da @< Data2, Data1 @< Da),Lista),
 		somaLista(Lista,R).
 
-%--------------------------------------------
+%--------------------------------------------------------------------------------------------
 %Invariantes estruturais
+
 %Utente com Id nao existe/repetido
 +utente(Id,Nome,Idade,Morada)::(solucoes((X,Y,Z),utente(Id,X,Y,Z),S),
                                 len(S,N),
                                 N=<1).
+
 %Prestador com Id nao existe/repetido
 +prestador(Id,Nome,Esp,Inst)::(solucoes((X,Y,Z),prestador(Id,X,Y,Z),S),
                                 len(S,N),
@@ -215,19 +232,9 @@ custoTotal(datas,Data1,Data2 ,R):-
 -instituicao(Id,Nome,Tipo,Cidade):-(solucoes((IdP,NomeP,Esp),prestador(IdP,NomeP,Esp,Nome),S),
                                     len(S,N),
                                     N=<1).
-%--------------------------------------------
+
+%--------------------------------------------------------------------------------------------
 %Extensao do predicado que permite a evolucao/involucao do conhecimento
-
-inserir(P):-assert(P).
-inserir(P):-retract(P),!,fail.
-
-remover(P):-retract(P).
-remover(P):-assert(P),!,fail.
-
-test([]).
-test([H|T]):-H,test(T).
-
-len(S,N):-length(S,N).
 
 evolucao(Termo):-
     solucoes(Inv,+Termo::Inv,S),
@@ -239,7 +246,35 @@ involucao(Termo):-
     remover(Termo),
     test(S).
 
-%--------------------------------------------
+%--------------------------------------------------------------------------------------------
+%regras auxiliares
+
+%solocoes : Formato, Questao, Soluçoes -> {V,F}
+solucoes(T,Q,S):-findall(T,Q,S).
+
+%funçao auxiliar para somar uma lista
+somaLista([],0).
+somaLista([X],X).
+somaLista([X|L],N):-  
+         somaLista(L,N1),
+         N is X + N1.
+
+%comprimento de uma lista
+len(S,N):-length(S,N).
+
+%inserir conhecimento
+inserir(P):-assert(P).
+inserir(P):-retract(P),!,fail.
+
+%remover conhecimento
+remover(P):-retract(P).
+remover(P):-assert(P),!,fail.
+
+%regra de teste dos invariantes correspondentes
+test([]).
+test([H|T]):-H,test(T).
+
+%--------------------------------------------------------------------------------------------
 %Extras
 
 %Determinar as especialidades com que um utente esteve relacionado, devolvendo a data das mesmas.
