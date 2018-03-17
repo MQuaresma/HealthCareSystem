@@ -55,7 +55,7 @@ cuidado(2016-08-30,6,5,consulta,16).
 cuidado(2017-01-20,1,6,consulta,10).
 
 %Adicional
-% instituicao: id, nome, tipo, cidade
+% instituicao: #IdIt, Nome, Tipo, Cidade -> {V,F}
 instituicao(1,hospital_Braga,hospital,braga).
 instituicao(2,hospital_Lisboa,hospital,lisboa).
 instituicao(3,hospital_Guimaraes,hospital,guimaraes).
@@ -69,23 +69,31 @@ instituicao(6,clinica_SantaTecla,clinica,braga).
 %--------------------------------------------------------------------------------------------
 %Registar utentes, prestadores e cuidados de saúde,instituicoes
 
+%registarUtente: Id, Nome, Idade, Morada -> {V,F}
 registarUtente(Id,Nome,Idade,Morada):-evolucao(utente(Id,Nome,Idade,Morada)).
 
+%registarPrestador: Id, Nome, Especialidade, Instituição -> {V,F}
 registarPrestador(Id,Nome,Esp,Inst):-evolucao(prestador(Id,Nome,Esp,Inst)).
 
+%registarCuidado: Data, IdUtente, IdPrestador, Descrição, Custo -> {V,F}
 registarCuidado(Data,IdU,IdPrest,Desc,Custo):-evolucao(cuidado(Data,IdU,IdPrest,Desc,Custo)).
 
+%registarInstituicao: Id, Nome, Tipo, Cidade -> {V,F}
 registarInstituicao(Id,Nome,Tipo,Cidade):-evolucao(instituicao(Id,Nome,Tipo,Cidade)).
 
 %--------------------------------------------------------------------------------------------
 %Remover utentes, prestadores e cuidados de saúde,instituicoes
 
+%removerUtente: Id, Nome, Idade, Morada -> {V,F}
 removerUtente(Id,Nome,Idade,Morada):-involucao(utente(Id,Nome,Idade,Morada)).
 
+%removerPrestador: Id, Nome, Especialidade, Instituição -> {V,F}
 removerPrestador(Id,Nome,Esp,Inst):-involucao(prestador(Id,Nome,Esp,Inst)).
 
+%removerCuidado: Data, IdUtente, IdPrestador, Descrição, Custo -> {V,F}
 removerCuidado(Data,IdU,IdPrest,Desc,Custo):-involucao(cuidado(Data,IdU,IdPrest,Desc,Custo)).
 
+%removerInstituicao: Id, Nome, Tipo, Cidade -> {V,F}
 removerInstituicao(Id,Nome,Tipo,Cidade):-involucao(instituicao(Id,Nome,Tipo,Cidade)).
 
 %--------------------------------------------------------------------------------------------
@@ -143,39 +151,48 @@ identUtentes(instituicao,Ins,R):-
 %--------------------------------------------------------------------------------------------
 %Identificar cuidados de saúde realizados por utente/instituição/prestador
 
+%identificaCuidadosRealizados: utente, IdUtente, Resultado -> {V,F}
 identificaCuidadosRealizados(utente,IdU,R):-
         solucoes( cuidado(Da,IdU,IdP,Desc,C), cuidado(Da,IdU,IdP,Desc,C),R).
 
+%identificaCuidadosRealizados: instituicao, Instituição, Resultado -> {V,F}
 identificaCuidadosRealizados(instituicao,Ins,R):-
         solucoes( cuidado(Da,IdU,IdP,Desc,C), (cuidado(Da,IdU,IdP,Desc,C), prestador(IdP,No,Esp,Ins)),R).
 
+%identificaCuidadosRealizados: prestador, IdPrestador, Resultado -> {V,F}
 identificaCuidadosRealizados(prestador,IdP,R):-
         solucoes( cuidado(Da,IdU,IdP,Desc,C), cuidado(Da,IdU,IdP,Desc,C),R).
 
 %--------------------------------------------------------------------------------------------
 %Determinar todas as instituições/prestadores a que um utente já recorreu
 
+%porUtente: instituicao, IdUtente, Resultado -> {V,F} 
 porUtente(instituicao,IdU,R):-
 		solucoes( Ins, (cuidado(Da,IdU,IdP,Desc,C), prestador(IdP,No,Esp,Ins)),R).
 
+%porUtente: prestador, IdUtente, Resultado -> {V,F}
 porUtente(prestador,IdU,R):-
 		solucoes( (IdP,No), (cuidado(Da,IdU,IdP,Desc,C), prestador(IdP,No,Esp,Ins)),R).
 
 %--------------------------------------------------------------------------------------------
 %Calcular o custo total dos cuidados de saúde por utente/especialidade/prestador/datas
 
+%custoTotal: utente, IdUtente, Resultado -> {V,F}
 custoTotal(utente,IdU,R):-
 		solucoes( C, cuidado(Da,IdU,IdP,Desc,C),Lista),
 		somaLista(Lista,R).
 
+%custoTotal: especialidade, Especialidade, Resultado -> {V,F}
 custoTotal(especialidade,Esp,R):-
 		solucoes( C, (cuidado(Da,IdU,IdP,Desc,C), prestador(IdP,No,Esp,Ins)),Lista),
 		somaLista(Lista,R).
 
+%custoTotal: prestador, IdPrestador, Resultado -> {V,F}
 custoTotal(prestador,IdP,R):-
-		solucoes( C, cuidado(Da,IdU,IdP,Desc,C),Lista), %quando é adicionado um cuidado é verificado se o prestador existe certo? logo pode-se fazer assim, faço o mesmo em cima 
+		solucoes( C, cuidado(Da,IdU,IdP,Desc,C),Lista),
 		somaLista(Lista,R).
 
+%custoTotal: datas, Data, Data, Resultado -> {V,F}
 custoTotal(datas,Data1,Data2 ,R):-
 		solucoes( C, (cuidado(Da,IdU,IdP,Desc,C), Da @< Data2, Data1 @< Da),Lista),
 		somaLista(Lista,R).
