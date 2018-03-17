@@ -85,7 +85,7 @@ Adicionalmente assumem-se vários pressupostos de entre os quais:
 \end{itemize}
 Por fim o sistema de representação de conhecimento e raciocínio desenvolvido deve respeitar as "leis" da lógica recorrendo para isso a invariantes que garantem que certas propriedades são respeitadas. Estes (invariantes) garantem a inexistência de inconsistências bem como a preservação do "significado do conhecimento" e são usados na evolução e involução da base de conhecimento.
 \newline
-Foi, assim implementadas as seguintes funcionalidades:
+Foram assim, implementadas as seguintes funcionalidades:
 \begin{itemize}
 	\item Registar utentes, prestadores e cuidados de saúde,instituicoes
     \newline
@@ -208,11 +208,11 @@ Tendo isto em conta, foram implementados 10 invariantes que permitem que:
     \item não existam instituições com \textit{id's} repetidos
     \item um prestador tenha que pertencer obrigatoriamente a uma instituição da base de conhecimento
     \item não existam cuidados repetidos
-    \item seja garantida a existência de um utente
-    \item seja garantida a existência de um prestador
-    \item não existam cuidados referentes a um utente
-    \item não existam cuidados referentes a um prestador
-    \item não existem prestadores registados numa instituição
+    \item seja garantida a existência do utente do cuidado a adicionar
+    \item seja garantida a existência do prestador do cuidado a adicionar
+    \item não pode ser removido um utente com cuidados associados
+    \item não pode ser removido um prestador com cuidados associados
+    \item não pode ser removida uma instituição se tiver associada a prestadores
 \end{itemize}
 
 
