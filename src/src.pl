@@ -48,6 +48,7 @@ prestador(6,mafalda,ortopedia,clinica_SantaTecla).
 cuidado(2016-05-23,1,1,consulta,20).
 cuidado(2017-03-04,2,2,consulta,32).
 cuidado(2017-05-20,1,3,consulta,15).
+cuidado(2017-05-10,1,3,consulta,15).
 cuidado(2017-02-14,3,5,consulta,14).
 cuidado(2016-11-01,7,4,consulta,10).
 cuidado(2017-09-27,8,2,consulta,24).
@@ -266,7 +267,7 @@ involucao(Termo):-
 %--------------------------------------------------------------------------------------------
 %regras auxiliares
 
-%solocoes : Formato, Questao, Soluçoes -> {V,F}
+%solucoes : Formato, Questao, Soluçoes -> {V,F}
 solucoes(T,Q,S):-findall(T,Q,S).
 
 %funçao auxiliar para somar uma lista
@@ -278,6 +279,29 @@ somaLista([X|L],N):-
 
 %comprimento de uma lista
 len(S,N):-length(S,N).
+
+%ordena uma lista
+ordena(S,N):-sort(S,N).
+
+%contaOcorrencias de um elem numa lista
+contaOcorrencias(X,[],0).
+contaOcorrencias(X,[X|T],R):-
+                    contaOcorrencias(X,T,RT),
+                    R is RT+1.
+contaOcorrencias(X,[H|T],R):-contaOcorrencias(X,T,R).
+
+%elemento mais frequente entre dois elementos
+maxFreqPair(X,XC,Y,YC,X):-XC>YC.
+maxFreqPair(X,XC,Y,YC,Y):-XC=<YC.
+
+%elemento mais frequente numa lista
+maxRepeticoes([X|[]],X).
+maxRepeticoes([X|T],R):-
+                contaOcorrencias(X,[X|T],O),
+                maxRepeticoes(T,RT),
+                contaOcorrencias(RT,T,OT),
+                maxFreqPair(X,O,RT,OT,R).
+
 
 %inserir conhecimento
 inserir(P):-assert(P).
@@ -325,11 +349,26 @@ instituicoesDoTipo(Tipo,S):-
         solucoes(NomeI,instituicao(IdI,NomeI,Tipo,Ci),S).
 
 %Em que cidade foram mais cuidados realizados
+cidadeComMaisCuidados(R):-
+                        solucoes(Cidade,(instituicao(IdI,Inst,TipoI,Cidade),prestador(IdP,NomeP,Esp,Inst),cuidado(Data,IdU,IdP,Desc,Custo)),S),
+                        maxRepeticoes(S,R).
 
 %Qual a instituiçao com mais cuidados realizados
+instituicaoComMaisCuidados(R):-
+                        solucoes(Inst,(prestador(IdP,NomeP,Esp,Inst),cuidado(Data,IdU,IdP,Desc,Custo)),S),
+                        maxRepeticoes(S,R).
 
 %Que utente tem mais cuidados realizados
+utenteComMaisCuidados(R):-
+                    solucoes(IdU,cuidado(Data,IdU,IdP,Desc,Custo),S),
+                    maxRepeticoes(S,R).
 
 %Que prestador prestou mais cuidados
+prestadorComMaisCuidados(R):-
+                    solucoes(IdP,cuidado(Data,IdU,IdP,Desc,Custo),S),
+                    maxRepeticoes(S,R).
 
 %Em que instituição o utente realizou mais cuidados
+instituicaoMaisFrequente(IdU,R):-
+                    solucoes(Inst,(prestador(IdP,NomeP,Esp,Inst),cuidado(Data,IdU,IdP,Desc,Custo)),S),
+                    maxRepeticoes(S,R).
