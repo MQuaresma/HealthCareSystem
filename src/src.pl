@@ -267,34 +267,37 @@ involucao(Termo):-
 %--------------------------------------------------------------------------------------------
 %regras auxiliares
 
+%Encontra todos os predicados(Questao) que sejam satisfeitos ao efetuar o backtracking tendo Formato em conta
 %solucoes : Formato, Questao, Soluçoes -> {V,F}
 solucoes(T,Q,S):-findall(T,Q,S).
 
-%funçao auxiliar para somar uma lista
+%Funçao para somar uma lista
+%somaLista: Lista,Solucao -> {V,F}
 somaLista([],0).
 somaLista([X],X).
 somaLista([X|L],N):-  
          somaLista(L,N1),
          N is X + N1.
 
-%comprimento de uma lista
+%Calcula o comprimento de uma lista
+%len: Lista,Solucao -> {V,F}
 len(S,N):-length(S,N).
 
-%ordena uma lista
-ordena(S,N):-sort(S,N).
-
-%contaOcorrencias de um elem numa lista
+%Conta o numero de ocorrencias de um elemento numa lista
+%contaOcorrencias: Elemento,Lista,Solucao -> {V,F}
 contaOcorrencias(X,[],0).
 contaOcorrencias(X,[X|T],R):-
                     contaOcorrencias(X,T,RT),
                     R is RT+1.
 contaOcorrencias(X,[H|T],R):-contaOcorrencias(X,T,R).
 
-%elemento mais frequente entre dois elementos
+%Calcula o elemento mais frequente de um par
+%maxFreqPair: Elemento1,Frequencia,Elemento2,Frequencia,Solucao -> {V,F}
 maxFreqPair(X,XC,Y,YC,X):-XC>YC.
 maxFreqPair(X,XC,Y,YC,Y):-XC=<YC.
 
-%elemento mais frequente numa lista
+%Calcula o elemento mais frequente de uma lista
+%maxRepeticoes: Lista,Solucao -> {V,F}
 maxRepeticoes([X|[]],X).
 maxRepeticoes([X|T],R):-
                 contaOcorrencias(X,[X|T],O),
@@ -302,14 +305,18 @@ maxRepeticoes([X|T],R):-
                 contaOcorrencias(RT,T,OT),
                 maxFreqPair(X,O,RT,OT,R).
 
-%inserir conhecimento
+%Inserir conhecimento
+%inserir: Termo -> {V,F}
+>>>>>>> origin/master
 inserir(P):-assert(P).
 inserir(P):-retract(P),!,fail.
 
-%remover conhecimento
+%Remover conhecimento
+%remover: Termo -> {V,F}
 remover(P):-retract(P).
 
-%regra de teste dos invariantes correspondentes
+%Regra de teste dos invariantes correspondentes
+%test: Lista -> {V,F}
 test([]).
 test([H|T]):-H,test(T).
 
