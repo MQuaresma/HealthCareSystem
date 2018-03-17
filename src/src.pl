@@ -285,10 +285,11 @@ len(S,N):-length(S,N).
 %Conta o numero de ocorrencias de um elemento numa lista
 %contaOcorrencias: Elemento,Lista,Solucao -> {V,F}
 contaOcorrencias(X,[],0).
-contaOcorrencias(X,[X|T],R):-
+contaOcorrencias(X,[H|T],R):-
                     contaOcorrencias(X,T,RT),
+                    X==H,
                     R is RT+1.
-contaOcorrencias(X,[H|T],R):-contaOcorrencias(X,T,R).
+contaOcorrencias(X,[H|T],R):-X\=H,contaOcorrencias(X,T,R).
 
 %Calcula o elemento mais frequente de um par
 %maxFreqPair: Elemento1,Frequencia,Elemento2,Frequencia,Solucao -> {V,F}
@@ -376,7 +377,7 @@ prestadorComMaisCuidados(R):-
                     maxRepeticoes(S,R).
 
 %Em que instituição o utente realizou mais cuidados
-%instituicaoMaisFrequente: IdUtente, Resultado -> {V,F}
-instituicaoMaisFrequente(IdU,R):-
+%instituicaoMaisFrequentadaPorUtente: IdUtente, Resultado -> {V,F}
+instituicaoMaisFrequentadaPorUtente(IdU,R):-
                     solucoes(Inst,(prestador(IdP,NomeP,Esp,Inst),cuidado(Data,IdU,IdP,Desc,Custo)),S),
                     maxRepeticoes(S,R).
