@@ -328,7 +328,7 @@ especialidadesDeUtente(IdU,S) :-
 prestadoresDeUtenteEmInstituicao(IdU,Inst,S) :-
 		solucoes(NomeP,(utente(IdU,NomeU,IdadeU,Morada),prestador(IdP,NomeP,Esp,Inst),cuidado(Data,IdU,IdP,Desc,Custo)),S).
 
-%Determinar as instituições existentes cidade.
+%Determinar as instituições existentes numa cidade.
 %instituicoesDeCidade : Cidade, Solução -> {V,F}
 instituicoesDeCidade(Cidade,S) :-
         solucoes(NomeI,instituicao(IdI,NomeI,TipoI,Cidade),S).
@@ -349,26 +349,31 @@ instituicoesDoTipo(Tipo,S):-
         solucoes(NomeI,instituicao(IdI,NomeI,Tipo,Ci),S).
 
 %Em que cidade foram mais cuidados realizados
+%cidadeComMaisCuidados: Resultado -> {V,F}
 cidadeComMaisCuidados(R):-
                         solucoes(Cidade,(instituicao(IdI,Inst,TipoI,Cidade),prestador(IdP,NomeP,Esp,Inst),cuidado(Data,IdU,IdP,Desc,Custo)),S),
                         maxRepeticoes(S,R).
 
 %Qual a instituiçao com mais cuidados realizados
+%instituicaoComMaisCuidados: Resultado -> {V,F}
 instituicaoComMaisCuidados(R):-
                         solucoes(Inst,(prestador(IdP,NomeP,Esp,Inst),cuidado(Data,IdU,IdP,Desc,Custo)),S),
                         maxRepeticoes(S,R).
 
 %Que utente tem mais cuidados realizados
+%utenteComMaisCuidados: Resultado -> {V,F}
 utenteComMaisCuidados(R):-
                     solucoes(IdU,cuidado(Data,IdU,IdP,Desc,Custo),S),
                     maxRepeticoes(S,R).
 
 %Que prestador prestou mais cuidados
+%prestadorComMaisCuidados: Resultado -> \{V,F\}
 prestadorComMaisCuidados(R):-
                     solucoes(IdP,cuidado(Data,IdU,IdP,Desc,Custo),S),
                     maxRepeticoes(S,R).
 
 %Em que instituição o utente realizou mais cuidados
+%instituicaoMaisFrequente: IdUtente, Resultado -> {V,F}
 instituicaoMaisFrequente(IdU,R):-
                     solucoes(Inst,(prestador(IdP,NomeP,Esp,Inst),cuidado(Data,IdU,IdP,Desc,Custo)),S),
                     maxRepeticoes(S,R).
