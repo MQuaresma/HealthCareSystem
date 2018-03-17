@@ -274,7 +274,6 @@ solucoes(T,Q,S):-findall(T,Q,S).
 %Funçao para somar uma lista
 %somaLista: Lista,Solucao -> {V,F}
 somaLista([],0).
-somaLista([X],X).
 somaLista([X|L],N):-  
          somaLista(L,N1),
          N is X + N1.
@@ -307,7 +306,6 @@ maxRepeticoes([X|T],R):-
 
 %Inserir conhecimento
 %inserir: Termo -> {V,F}
->>>>>>> origin/master
 inserir(P):-assert(P).
 inserir(P):-retract(P),!,fail.
 
@@ -328,10 +326,10 @@ test([H|T]):-H,test(T).
 especialidadesDeUtente(IdU,S) :-
 		solucoes((Esp,Data),(utente(IdU,NomeU,IdadeU,Morada),prestador(IdP,X,Esp,Y),cuidado(Data,IdU,IdP,Z,W)),S).
 
-%Determinar os prestadores que cuidaram de um utente.
+%Determinar os prestadores que cuidaram de um utente numa dada instituição.
 %prestadoresDeUtenteEmInstituicao : IdUtente, Solução -> {V,F}
 prestadoresDeUtenteEmInstituicao(IdU,Inst,S) :-
-		solucoes(NomeP,(utente(IdU,NomeU,IdadeU,Morada),prestador(IdP,NomeP,Esp,Inst),cuidado(Data,IdU,IdP,Desc,Custo)),S).
+		solucoes(IdP,(utente(IdU,NomeU,IdadeU,Morada),prestador(IdP,NomeP,Esp,Inst),cuidado(Data,IdU,IdP,Desc,Custo)),S).
 
 %Determinar as instituições existentes numa cidade.
 %instituicoesDeCidade : Cidade, Solução -> {V,F}
