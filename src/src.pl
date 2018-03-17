@@ -122,32 +122,32 @@ identificaInstituicoes(S) :-
 %--------------------------------------------------------------------------------------------
 %Identificar cuidados de saúde prestados por instituição/cidade/datas
 
-%identCuiPrest : instituicao, Instituicao, Resultado -> {V,F}
+%identCuidPrest : instituicao, Instituicao, Resultado -> {V,F}
 identCuidPrest(instituicao,Ins,R):- 
         solucoes( Esp, prestador(IdP,No,Esp,Ins),R).
 
-%identCuiPrest : cidade, Cidade, Resultado -> {V,F}
+%identCuidPrest : cidade, Cidade, Resultado -> {V,F}
 identCuidPrest(cidade,Cid,R):-
-        solucoes( Esp, (cuidado(Da,IdU,IdP,Desc,C), utente(IdU,NoU,Id,Cid), prestador(IdP,NoP,Esp,Ins)),R).
+        solucoes( Esp, (utente(IdU,NoU,Id,Cid), cuidado(Da,IdU,IdP,Desc,C),  prestador(IdP,NoP,Esp,Ins)),R).
 
-%identCuiPrest : datas, Data, Data, Resultado -> {V,F}
+%identCuidPrest : datas, Data, Data, Resultado -> {V,F}
 identCuidPrest(datas,Data1,Data2,R):-
-        solucoes( Esp, (prestador(IdP,No,Esp,Ins), cuidado(Da,IdU,IdP,Desc,C), Da @< Data2, Data1 @< Da),R).
+        solucoes( Esp, (cuidado(Da,IdU,IdP,Desc,C), Da @< Data2, Data1 @< Da, prestador(IdP,No,Esp,Ins)),R).
 
 %--------------------------------------------------------------------------------------------
 %Identificar os utentes de um prestador/especialidade/instituição
 
-%identUtentes : prestador, Nome, Resultado -> {V,F}
-identUtentes(prestador,PrestadorNome,R):-
-        solucoes( NoU, (prestador(IdP,PrestadorNome,Esp,Ins), cuidado(Da,IdU,IdP,Desc,C), utente(IdU,NoU,Id,Cid)),R).
+%identUtentes : prestador, IdPrestador, Resultado -> {V,F}
+identUtentes(prestador,IdP,R):-
+        solucoes( IdU, (cuidado(Da,IdU,IdP,Desc,C), utente(IdU,NoU,Id,Cid)),R).
 
 %identUtentes : especialidade, Especialidade, Resultado -> {V,F}
 identUtentes(especialidade,Espec,R):-
-        solucoes( NoU, (prestador(IdP,NoP,Espec,Ins), cuidado(Da,IdU,IdP,Desc,C), utente(IdU,NoU,Id,Cid)),R).
+        solucoes( IdU, (prestador(IdP,NoP,Espec,Ins), cuidado(Da,IdU,IdP,Desc,C)),R).
 
 %identUtentes : instituicao, Instituicao, Resultado -> {V,F}
 identUtentes(instituicao,Ins,R):-
-        solucoes( NoU, (prestador(IdP,NoP,Esp,Ins), cuidado(Da,IdU,IdP,Desc,C), utente(IdU,NoU,Id,Cid)),R).
+        solucoes( IdU, (prestador(IdP,NoP,Esp,Ins), cuidado(Da,IdU,IdP,Desc,C)),R).
 
 %--------------------------------------------------------------------------------------------
 %Identificar cuidados de saúde realizados por utente/instituição/prestador
@@ -239,17 +239,17 @@ custoTotal(datas,Data1,Data2 ,R):-
 %Nao existem cuidados referentes a utente
 -utente(Id,Nome,Idade,Morada)::(solucoes((Data,IdP,Desc,Custo),cuidado(Data,Id,IdP,Desc,Custo),S),
                                 len(S,N),
-                                N=<1).
+                                N==0).
 
 %Nao existem cuidados referentes a prestador
 -prestador(Id,Nome,Esp,Inst)::(solucoes((Data,IdU,Desc,Custo),cuidado(Data,IdU,Id,Desc,Custo),S),
                                 len(S,N),
-                                N=<1).
+                                N==0).
 
 %Nao existem prestadores resgistados nesta instituicao
--instituicao(Id,Nome,Tipo,Cidade):-(solucoes((IdP,NomeP,Esp),prestador(IdP,NomeP,Esp,Nome),S),
+-instituicao(Id,Nome,Tipo,Cidade)::(solucoes((IdP,NomeP,Esp),prestador(IdP,NomeP,Esp,Nome),S),
                                     len(S,N),
-                                    N=<1).
+                                    N==0).
 
 %--------------------------------------------------------------------------------------------
 %Extensao do predicado que permite a evolucao/involucao do conhecimento
@@ -261,8 +261,8 @@ evolucao(Termo):-
 
 involucao(Termo):-
     solucoes(Inv,-Termo::Inv,S),
-    remover(Termo),
-    test(S).
+    test(S),
+    remover(Termo).
 
 %--------------------------------------------------------------------------------------------
 %regras auxiliares
@@ -302,14 +302,12 @@ maxRepeticoes([X|T],R):-
                 contaOcorrencias(RT,T,OT),
                 maxFreqPair(X,O,RT,OT,R).
 
-
 %inserir conhecimento
 inserir(P):-assert(P).
 inserir(P):-retract(P),!,fail.
 
 %remover conhecimento
 remover(P):-retract(P).
-remover(P):-assert(P),!,fail.
 
 %regra de teste dos invariantes correspondentes
 test([]).
