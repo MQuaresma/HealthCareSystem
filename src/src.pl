@@ -56,7 +56,7 @@ cuidado(2016-08-30,6,5,consulta,16).
 cuidado(2017-01-20,1,6,consulta,10).
 
 %Adicional
-% instituicao: id, nome, tipo, cidade
+% instituicao: #IdIt, Nome, Tipo, Cidade -> {V,F}
 instituicao(1,hospital_Braga,hospital,braga).
 instituicao(2,hospital_Lisboa,hospital,lisboa).
 instituicao(3,hospital_Guimaraes,hospital,guimaraes).
@@ -70,23 +70,31 @@ instituicao(6,clinica_SantaTecla,clinica,braga).
 %--------------------------------------------------------------------------------------------
 %Registar utentes, prestadores e cuidados de saúde,instituicoes
 
+%registarUtente: Id, Nome, Idade, Morada -> {V,F}
 registarUtente(Id,Nome,Idade,Morada):-evolucao(utente(Id,Nome,Idade,Morada)).
 
+%registarPrestador: Id, Nome, Especialidade, Instituição -> {V,F}
 registarPrestador(Id,Nome,Esp,Inst):-evolucao(prestador(Id,Nome,Esp,Inst)).
 
+%registarCuidado: Data, IdUtente, IdPrestador, Descrição, Custo -> {V,F}
 registarCuidado(Data,IdU,IdPrest,Desc,Custo):-evolucao(cuidado(Data,IdU,IdPrest,Desc,Custo)).
 
+%registarInstituicao: Id, Nome, Tipo, Cidade -> {V,F}
 registarInstituicao(Id,Nome,Tipo,Cidade):-evolucao(instituicao(Id,Nome,Tipo,Cidade)).
 
 %--------------------------------------------------------------------------------------------
 %Remover utentes, prestadores e cuidados de saúde,instituicoes
 
+%removerUtente: Id, Nome, Idade, Morada -> {V,F}
 removerUtente(Id,Nome,Idade,Morada):-involucao(utente(Id,Nome,Idade,Morada)).
 
+%removerPrestador: Id, Nome, Especialidade, Instituição -> {V,F}
 removerPrestador(Id,Nome,Esp,Inst):-involucao(prestador(Id,Nome,Esp,Inst)).
 
+%removerCuidado: Data, IdUtente, IdPrestador, Descrição, Custo -> {V,F}
 removerCuidado(Data,IdU,IdPrest,Desc,Custo):-involucao(cuidado(Data,IdU,IdPrest,Desc,Custo)).
 
+%removerInstituicao: Id, Nome, Tipo, Cidade -> {V,F}
 removerInstituicao(Id,Nome,Tipo,Cidade):-involucao(instituicao(Id,Nome,Tipo,Cidade)).
 
 %--------------------------------------------------------------------------------------------
@@ -144,39 +152,48 @@ identUtentes(instituicao,Ins,R):-
 %--------------------------------------------------------------------------------------------
 %Identificar cuidados de saúde realizados por utente/instituição/prestador
 
+%identificaCuidadosRealizados: utente, IdUtente, Resultado -> {V,F}
 identificaCuidadosRealizados(utente,IdU,R):-
         solucoes( cuidado(Da,IdU,IdP,Desc,C), cuidado(Da,IdU,IdP,Desc,C),R).
 
+%identificaCuidadosRealizados: instituicao, Instituição, Resultado -> {V,F}
 identificaCuidadosRealizados(instituicao,Ins,R):-
         solucoes( cuidado(Da,IdU,IdP,Desc,C), (cuidado(Da,IdU,IdP,Desc,C), prestador(IdP,No,Esp,Ins)),R).
 
+%identificaCuidadosRealizados: prestador, IdPrestador, Resultado -> {V,F}
 identificaCuidadosRealizados(prestador,IdP,R):-
         solucoes( cuidado(Da,IdU,IdP,Desc,C), cuidado(Da,IdU,IdP,Desc,C),R).
 
 %--------------------------------------------------------------------------------------------
 %Determinar todas as instituições/prestadores a que um utente já recorreu
 
+%porUtente: instituicao, IdUtente, Resultado -> {V,F} 
 porUtente(instituicao,IdU,R):-
 		solucoes( Ins, (cuidado(Da,IdU,IdP,Desc,C), prestador(IdP,No,Esp,Ins)),R).
 
+%porUtente: prestador, IdUtente, Resultado -> {V,F}
 porUtente(prestador,IdU,R):-
 		solucoes( (IdP,No), (cuidado(Da,IdU,IdP,Desc,C), prestador(IdP,No,Esp,Ins)),R).
 
 %--------------------------------------------------------------------------------------------
 %Calcular o custo total dos cuidados de saúde por utente/especialidade/prestador/datas
 
+%custoTotal: utente, IdUtente, Resultado -> {V,F}
 custoTotal(utente,IdU,R):-
 		solucoes( C, cuidado(Da,IdU,IdP,Desc,C),Lista),
 		somaLista(Lista,R).
 
+%custoTotal: especialidade, Especialidade, Resultado -> {V,F}
 custoTotal(especialidade,Esp,R):-
 		solucoes( C, (cuidado(Da,IdU,IdP,Desc,C), prestador(IdP,No,Esp,Ins)),Lista),
 		somaLista(Lista,R).
 
+%custoTotal: prestador, IdPrestador, Resultado -> {V,F}
 custoTotal(prestador,IdP,R):-
-		solucoes( C, cuidado(Da,IdU,IdP,Desc,C),Lista), %quando é adicionado um cuidado é verificado se o prestador existe certo? logo pode-se fazer assim, faço o mesmo em cima 
+		solucoes( C, cuidado(Da,IdU,IdP,Desc,C),Lista),
 		somaLista(Lista,R).
 
+%custoTotal: datas, Data, Data, Resultado -> {V,F}
 custoTotal(datas,Data1,Data2 ,R):-
 		solucoes( C, (cuidado(Da,IdU,IdP,Desc,C), Da @< Data2, Data1 @< Da),Lista),
 		somaLista(Lista,R).
@@ -222,17 +239,17 @@ custoTotal(datas,Data1,Data2 ,R):-
 %Nao existem cuidados referentes a utente
 -utente(Id,Nome,Idade,Morada)::(solucoes((Data,IdP,Desc,Custo),cuidado(Data,Id,IdP,Desc,Custo),S),
                                 len(S,N),
-                                N=<1).
+                                N==0).
 
 %Nao existem cuidados referentes a prestador
 -prestador(Id,Nome,Esp,Inst)::(solucoes((Data,IdU,Desc,Custo),cuidado(Data,IdU,Id,Desc,Custo),S),
                                 len(S,N),
-                                N=<1).
+                                N==0).
 
 %Nao existem prestadores resgistados nesta instituicao
--instituicao(Id,Nome,Tipo,Cidade):-(solucoes((IdP,NomeP,Esp),prestador(IdP,NomeP,Esp,Nome),S),
+-instituicao(Id,Nome,Tipo,Cidade)::(solucoes((IdP,NomeP,Esp),prestador(IdP,NomeP,Esp,Nome),S),
                                     len(S,N),
-                                    N=<1).
+                                    N==0).
 
 %--------------------------------------------------------------------------------------------
 %Extensao do predicado que permite a evolucao/involucao do conhecimento
@@ -244,40 +261,43 @@ evolucao(Termo):-
 
 involucao(Termo):-
     solucoes(Inv,-Termo::Inv,S),
-    remover(Termo),
-    test(S).
+    test(S),
+    remover(Termo).
 
 %--------------------------------------------------------------------------------------------
 %regras auxiliares
 
+%Encontra todos os predicados(Questao) que sejam satisfeitos ao efetuar o backtracking tendo Formato em conta
 %solucoes : Formato, Questao, Soluçoes -> {V,F}
 solucoes(T,Q,S):-findall(T,Q,S).
 
-%funçao auxiliar para somar uma lista
+%Funçao para somar uma lista
+%somaLista: Lista,Solucao -> {V,F}
 somaLista([],0).
 somaLista([X],X).
 somaLista([X|L],N):-  
          somaLista(L,N1),
          N is X + N1.
 
-%comprimento de uma lista
+%Calcula o comprimento de uma lista
+%len: Lista,Solucao -> {V,F}
 len(S,N):-length(S,N).
 
-%ordena uma lista
-ordena(S,N):-sort(S,N).
-
-%contaOcorrencias de um elem numa lista
+%Conta o numero de ocorrencias de um elemento numa lista
+%contaOcorrencias: Elemento,Lista,Solucao -> {V,F}
 contaOcorrencias(X,[],0).
 contaOcorrencias(X,[X|T],R):-
                     contaOcorrencias(X,T,RT),
                     R is RT+1.
 contaOcorrencias(X,[H|T],R):-contaOcorrencias(X,T,R).
 
-%elemento mais frequente entre dois elementos
+%Calcula o elemento mais frequente de um par
+%maxFreqPair: Elemento1,Frequencia,Elemento2,Frequencia,Solucao -> {V,F}
 maxFreqPair(X,XC,Y,YC,X):-XC>YC.
 maxFreqPair(X,XC,Y,YC,Y):-XC=<YC.
 
-%elemento mais frequente numa lista
+%Calcula o elemento mais frequente de uma lista
+%maxRepeticoes: Lista,Solucao -> {V,F}
 maxRepeticoes([X|[]],X).
 maxRepeticoes([X|T],R):-
                 contaOcorrencias(X,[X|T],O),
@@ -285,16 +305,17 @@ maxRepeticoes([X|T],R):-
                 contaOcorrencias(RT,T,OT),
                 maxFreqPair(X,O,RT,OT,R).
 
-
-%inserir conhecimento
+%Inserir conhecimento
+%inserir: Termo -> {V,F}
 inserir(P):-assert(P).
 inserir(P):-retract(P),!,fail.
 
-%remover conhecimento
+%Remover conhecimento
+%remover: Termo -> {V,F}
 remover(P):-retract(P).
-remover(P):-assert(P),!,fail.
 
-%regra de teste dos invariantes correspondentes
+%Regra de teste dos invariantes correspondentes
+%test: Lista -> {V,F}
 test([]).
 test([H|T]):-H,test(T).
 
@@ -311,7 +332,7 @@ especialidadesDeUtente(IdU,S) :-
 prestadoresDeUtenteEmInstituicao(IdU,Inst,S) :-
 		solucoes(NomeP,(utente(IdU,NomeU,IdadeU,Morada),prestador(IdP,NomeP,Esp,Inst),cuidado(Data,IdU,IdP,Desc,Custo)),S).
 
-%Determinar as instituições existentes cidade.
+%Determinar as instituições existentes numa cidade.
 %instituicoesDeCidade : Cidade, Solução -> {V,F}
 instituicoesDeCidade(Cidade,S) :-
         solucoes(NomeI,instituicao(IdI,NomeI,TipoI,Cidade),S).
@@ -332,26 +353,31 @@ instituicoesDoTipo(Tipo,S):-
         solucoes(NomeI,instituicao(IdI,NomeI,Tipo,Ci),S).
 
 %Em que cidade foram mais cuidados realizados
+%cidadeComMaisCuidados: Resultado -> {V,F}
 cidadeComMaisCuidados(R):-
                         solucoes(Cidade,(instituicao(IdI,Inst,TipoI,Cidade),prestador(IdP,NomeP,Esp,Inst),cuidado(Data,IdU,IdP,Desc,Custo)),S),
                         maxRepeticoes(S,R).
 
 %Qual a instituiçao com mais cuidados realizados
+%instituicaoComMaisCuidados: Resultado -> {V,F}
 instituicaoComMaisCuidados(R):-
                         solucoes(Inst,(prestador(IdP,NomeP,Esp,Inst),cuidado(Data,IdU,IdP,Desc,Custo)),S),
                         maxRepeticoes(S,R).
 
 %Que utente tem mais cuidados realizados
+%utenteComMaisCuidados: Resultado -> {V,F}
 utenteComMaisCuidados(R):-
                     solucoes(IdU,cuidado(Data,IdU,IdP,Desc,Custo),S),
                     maxRepeticoes(S,R).
 
 %Que prestador prestou mais cuidados
+%prestadorComMaisCuidados: Resultado -> \{V,F\}
 prestadorComMaisCuidados(R):-
                     solucoes(IdP,cuidado(Data,IdU,IdP,Desc,Custo),S),
                     maxRepeticoes(S,R).
 
 %Em que instituição o utente realizou mais cuidados
+%instituicaoMaisFrequente: IdUtente, Resultado -> {V,F}
 instituicaoMaisFrequente(IdU,R):-
                     solucoes(Inst,(prestador(IdP,NomeP,Esp,Inst),cuidado(Data,IdU,IdP,Desc,Custo)),S),
                     maxRepeticoes(S,R).
