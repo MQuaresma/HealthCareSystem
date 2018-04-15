@@ -21,6 +21,22 @@ demo( Questao,desconhecido ) :-
     nao( -Questao ).
 
 %--------------------------------------------------------------------------------------------
+demoComp((Q1,Q2),R):-
+    demo(Q1,R1),
+    demoComp(Q2,R2),
+    conjuncao(R1,R2,R).
+demoComp((Q1;Q2),R):-
+    demo(Q1,R1),
+    demoComp(Q2,R2),
+    disjuncao(R1,R2,R).
+demoComp(QS,R):- demo(QS,R).
+
+conjuncao(R1,R2,verdadeiro):- R1==verdadeiro, R2==verdadeiro.
+conjuncao(R1,R2,R):- 
+
+disjuncao(R1,R2,R):-
+
+%--------------------------------------------------------------------------------------------
 % Extensao do meta-predicado nao: Questao -> {V,F}
 nao( Questao ) :-
     Questao, !, fail.
@@ -35,6 +51,8 @@ nao( Questao ).
 
 % op(Precedence, Type, Name)
 :- op( 900,xfy,'::' ).
+
+:- dynamic '-'/1.
 
 :- dynamic utente/4.
 :- dynamic prestador/4.
@@ -183,14 +201,24 @@ nulo(xpto8).
 %Invariantes estruturais
 
 %Utente com Id nao existe/repetido
-+utente(Id,Nome,Idade,Morada)::(solucoes((X,Y,Z),utente(Id,X,Y,Z),S),
-                                len(S,N),
++utente(Id,Nome,Idade,Morada)::(solucoes((X,Y,Z),utente(Id,X,Y,Z),S1),
+                                solucoes((X,Y,Z),-utente(Id,X,Y,Z),S2),
+                                solucoes((X,Y,Z),excecao(utente(Id,X,Y,Z)),S3),
+                                len(S1,N1),
+                                len(S2,N2),
+                                len(S3,N3),
+                                N is N1 + N2 + N3,
                                 N=<1).
 
 %Prestador com Id nao existe/repetido
-+prestador(Id,Nome,Esp,Inst)::(solucoes((X,Y,Z),prestador(Id,X,Y,Z),S),
-                                len(S,N),
-                                N=<1).
++prestador(Id,Nome,Esp,Inst)::(solucoes((X,Y,Z),prestador(Id,X,Y,Z),S1),
+                               solucoes((X,Y,Z),-prestador(Id,X,Y,Z),S2),
+                               solucoes((X,Y,Z),excecao(prestador(Id,X,Y,Z)),S3),
+                               len(S1,N1),
+                               len(S2,N2),
+                               len(S3,N3),
+                               N is N1 + N2 + N3,
+                               N=<1).
 
 %Prestador pertence a instituicao valida
 +prestador(Id,Nome,Esp,Inst)::(solucoes((IdI,TipoI,CidadeI),instituicao(IdI,Inst,TipoI,CidadeI),S),
@@ -198,9 +226,14 @@ nulo(xpto8).
                                 N>=1).
 
 %Cuidado nao existe/repetido
-+cuidado(Data,IdU,IdP,Desc,Custo)::(solucoes((Data,IdU,IdP,Desc,Custo),cuidado(Data,IdU,IdP,Desc,Custo),S),
-                                len(S,N),
-                                N=<1).
++cuidado(Data,IdU,IdP,Desc,Custo)::(solucoes((Data,IdU,IdP,Desc,Custo),cuidado(Data,IdU,IdP,Desc,Custo),S1),
+                                    solucoes((Data,IdU,IdP,Desc,Custo),-cuidado(Data,IdU,IdP,Desc,Custo),S2),
+                                    solucoes((Data,IdU,IdP,Desc,Custo),excecao(cuidado(Data,IdU,IdP,Desc,Custo)),S3),
+                                    len(S1,N1),
+                                    len(S2,N2),
+                                    len(S3,N3),
+                                    N is N1 + N2 + N3,
+                                    N=<1).
 
 %Utente existe
 +cuidado(Data,IdU,IdP,Desc,Custo)::(solucoes((X,Y,Z),utente(IdU,X,Y,Z),S),
@@ -213,8 +246,13 @@ nulo(xpto8).
                                     N>=1).
 
 %Instituicao com Id nao existe/repetido
-+instituicao(Id,Nome,Tipo,Cidade)::(solucoes((Nome,Tipo,Cidade),instituicao(Id,Nome,Tipo,Cidade),S),
-                                    len(S,N),
++instituicao(Id,Nome,Tipo,Cidade)::(solucoes((Nome,Tipo,Cidade),instituicao(Id,Nome,Tipo,Cidade),S1),
+                                    solucoes((Nome,Tipo,Cidade),-instituicao(Id,Nome,Tipo,Cidade),S2),
+                                    solucoes((Nome,Tipo,Cidade),excecao(instituicao(Id,Nome,Tipo,Cidade)),S3),
+                                    len(S1,N1),
+                                    len(S2,N2),
+                                    len(S3,N3),
+                                    N is N1 + N2 + N3,
                                     N=<1).
 
 %Nao existem cuidados referentes a utente
@@ -231,6 +269,78 @@ nulo(xpto8).
 -instituicao(Id,Nome,Tipo,Cidade)::(solucoes((IdP,NomeP,Esp),prestador(IdP,NomeP,Esp,Nome),S),
                                     len(S,N),
                                     N==0).
+
+%Utente com Id nao existe/repetido
++(-utente(Id,Nome,Idade,Morada))::(solucoes((X,Y,Z),utente(Id,X,Y,Z),S1),
+                                solucoes((X,Y,Z),-utente(Id,X,Y,Z),S2),
+                                solucoes((X,Y,Z),excecao(utente(Id,X,Y,Z)),S3),
+                                len(S1,N1),
+                                len(S2,N2),
+                                len(S3,N3),
+                                N is N1 + N2 + N3,
+                                N=<1).
+
+%Prestador com Id nao existe/repetido
++(-prestador(Id,Nome,Esp,Inst))::(solucoes((X,Y,Z),prestador(Id,X,Y,Z),S1),
+                               solucoes((X,Y,Z),-prestador(Id,X,Y,Z),S2),
+                               solucoes((X,Y,Z),excecao(prestador(Id,X,Y,Z)),S3),
+                               len(S1,N1),
+                               len(S2,N2),
+                               len(S3,N3),
+                               N is N1 + N2 + N3,
+                               N=<1).
+
+%Cuidado nao existe/repetido
++(-cuidado(Data,IdU,IdP,Desc,Custo))::(solucoes((Data,IdU,IdP,Desc,Custo),cuidado(Data,IdU,IdP,Desc,Custo),S1),
+                                    solucoes((Data,IdU,IdP,Desc,Custo),-cuidado(Data,IdU,IdP,Desc,Custo),S2),
+                                    solucoes((Data,IdU,IdP,Desc,Custo),excecao(cuidado(Data,IdU,IdP,Desc,Custo)),S3),
+                                    len(S1,N1),
+                                    len(S2,N2),
+                                    len(S3,N3),
+                                    N is N1 + N2 + N3,
+                                    N=<1).
+
+%Instituicao com Id nao existe/repetido
++(-instituicao(Id,Nome,Tipo,Cidade))::(solucoes((Nome,Tipo,Cidade),instituicao(Id,Nome,Tipo,Cidade),S1),
+                                    solucoes((Nome,Tipo,Cidade),-instituicao(Id,Nome,Tipo,Cidade),S2),
+                                    solucoes((Nome,Tipo,Cidade),excecao(instituicao(Id,Nome,Tipo,Cidade),S3)),
+                                    len(S1,N1),
+                                    len(S2,N2),
+                                    len(S3,N3),
+                                    N is N1 + N2 + N3,
+                                    N=<1).
+
+%Utente com Id nao existe/repetido
++excecao(utente(Id,Nome,Idade,Morada))::(solucoes((X,Y,Z),utente(Id,X,Y,Z),S1),
+                                         solucoes((X,Y,Z),-utente(Id,X,Y,Z),S2),
+                                         len(S1,N1),
+                                         len(S2,N2),
+                                         N is N1 + N2,
+                                         N=<1).
+
+%Prestador com Id nao existe/repetido
++excecao(prestador(Id,Nome,Esp,Inst))::(solucoes((X,Y,Z),prestador(Id,X,Y,Z),S1),
+                                        solucoes((X,Y,Z),-prestador(Id,X,Y,Z),S2),
+                                        len(S1,N1),
+                                        len(S2,N2),
+                                        N is N1 + N2,
+                                        N=<1).
+
+%Cuidado nao existe/repetido
++excecao(cuidado(Data,IdU,IdP,Desc,Custo))::(solucoes((Data,IdU,IdP,Desc,Custo),cuidado(Data,IdU,IdP,Desc,Custo),S1),
+                                             solucoes((Data,IdU,IdP,Desc,Custo),-cuidado(Data,IdU,IdP,Desc,Custo),S2),
+                                             len(S1,N1),
+                                             len(S2,N2),
+                                             N is N1 + N2,
+                                             N=<1).
+
+%Instituicao com Id nao existe/repetido
++excecao(instituicao(Id,Nome,Tipo,Cidade))::(solucoes((Nome,Tipo,Cidade),instituicao(Id,Nome,Tipo,Cidade),S1),
+                                             solucoes((Nome,Tipo,Cidade),-instituicao(Id,Nome,Tipo,Cidade),S2),
+                                             len(S1,N1),
+                                             len(S2,N2),
+                                             N is N1 + N2,
+                                             N=<1).
 
 %--------------------------------------------------------------------------------------------
 %Extensao do predicado que permite a evolucao/involucao do conhecimento

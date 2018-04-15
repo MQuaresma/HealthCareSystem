@@ -1,0 +1,156 @@
+\documentclass{article}
+\usepackage[a4paper, top=3cm, left=3cm, right=2.5cm, bottom=2.5cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{fancyvrb}
+\usepackage{amsmath}
+\usepackage{ragged2e}
+\usepackage[portuguese]{babel}
+
+\begin{document}
+
+\title{\Huge
+       \textbf{UNIVERSIDADE DO MINHO}\\
+       \vspace*{3cm}
+       \huge
+       \textbf{\textit{Health Care System}}\\
+       \vspace*{3cm}
+       \large
+       Mestrado Integrado de Engenharia Informática\\
+       \vspace*{2cm}
+       Sistemas de Representação de Conhecimento e Raciocínio\\
+       (2ºSemestre/2017-2018)
+       \vspace*{\fill}}
+
+\author{\hspace*{-5cm}Número\hspace*{1cm}Nome do(s) Autor(es)\hspace*{\fill}\\
+        \hspace*{-5cm}a78468\hspace*{1cm}João Vieira\hspace*{\fill}\\
+        \hspace*{-5cm}a78821\hspace*{1cm}José Martins\hspace*{\fill}\\
+        \hspace*{-5cm}a77049\hspace*{1cm}Miguel Quaresma\hspace*{\fill}\\
+        \hspace*{-5cm}a77689\hspace*{1cm}Simão Barbosa\hspace*{\fill}}
+
+\date{\hspace*{\fill}Braga, Portugal\hspace*{1cm}\\
+      \hspace*{\fill}\today\hspace*{1cm}}
+
+\maketitle
+
+\newpage
+
+\justify
+
+\vspace*{\fill}
+\section{Resumo}
+O objetivo deste projeto é criar um sistema de representação de conhecimento e raciocínio na caraterização de um universo na área da prestação de cuidados de saúde, em que as medidas de sucesso mínimas são as propostas pelo enunciado. Contudo foram desenvolvidas algumas funcionalidades extras para enriquecer a base de conhecimento. 
+\vspace*{\fill}
+
+\newpage
+
+\vspace*{\fill}
+\tableofcontents
+\vspace*{\fill}
+
+\newpage
+
+\vspace*{\fill}
+\section{Introdução}
+\textit{Health Care System} é um Sistema de Representação de Conhecimento e Raciocínio usado na caraterização de um universo na área da prestação de cuidados de saúde desenvolvido usando a linguagem de programação em lógica PROLOG. O projeto desenvolvido apresenta funcionalidades básicas associadas ao sistema em questão tendo ainda sido complementado com outras (funcionalidades) que complementam o universo em causa.
+\vspace*{\fill}
+
+\newpage
+
+\section{Descrição do Trabalho e Análise de Resultados}
+
+\subsection{Base de Conhecimento}
+A base de conhecimento do sistema desenvolvido é essencial à representação do conhecimento e raciocínio, como tal, tendo em conta o sistema em questão, foram desenvolvidas as seguintes entidades:
+\begin{itemize}
+	\item utente: \#IdUt, Nome, Idade, Morada $\to$ \{V,F\}
+    \item prestador: \#IdPrest, Nome, Especialidade, Instituição $\to$ \{V,F\}
+    \item cuidado: Data, \#IdUt, \#IdPrest, Descrição, Custo $\to$ \{V,F\}
+    \item instituicao: \#IdIt, Nome, Tipo, Cidade $\to$ \{V,F\}
+\end{itemize}
+São estas as entidades que servirão de suporte ao sistema desenvolvido.
+
+\subsection{Funcionalidades}
+As regras de uma base de conhecimento conferem-lhe a utilidade necessária ao seu funcionamento visto que, se não for possível efetuar questões e obter respostas às mesmas, a utilidade da base de conhecimento é nula. Em PROLOG estas funcionalidades/regras são implementadas tendo por base as caraterísticas desta linguagem:
+\begin{itemize} 
+	\item Algoritmo de Resolução: mais propriamente o \textit{Modus Tollens} (\{A se B,$\neg$A\}$\vdash\neg$B) no qual uma questão é verdade se adicionando a negação da mesma à base de conhecimento origina uma inconsistência
+    \item Clausulado de Horn: todas as regras são uma cláusula de Horn \textbf{i.e.} o qual admite apenas 1 termo positivo(conclusão), as fórmulas são bem formadas e fechadas, quantificadas universalmente (\textbf{e.g}. $\forall{A,B}$ avo(A,B)$\vdash$neto(B,A))
+    \item Mecanismo de \textit{backtracking}: na presença de uma solução inválida(falsa) esta meta-heurística continua à procura de "outro caminho" de modo a que a regra seja verdadeira.
+\end{itemize}
+Adicionalmente assumem-se vários pressupostos de entre os quais:
+\begin{itemize}
+	\item Pressuposto dos Nomes Únicos: duas constantes designam duas entidades diferentes
+    \item Pressuposto do Mundo Fechado: tudo o que não existe mencionado é falso
+    \item Pressuposto do Domínio Fechado: não há mais objetos no universo para além dos designados por constantes
+\end{itemize}
+Por fim o sistema de representação de conhecimento e raciocínio desenvolvido deve respeitar as "leis" da lógica recorrendo para isso a invariantes que garantem que certas propriedades são respeitadas. Estes (invariantes) garantem a inexistência de inconsistências bem como a preservação do "significado do conhecimento" e são usados na evolução e involução da base de conhecimento.
+
+\subsubsection{Funcionalidades Extra}
+
+\subsubsection{Invariantes}
+
+Com a implementação de certos invariantes considerados como importantes para o contexto em causa, a base de dados de conhecimento em PROLOG fica assim mais coerente e menos suscetível a falhas.
+Tendo isto em conta, foram implementados 10 invariantes que permitem que:
+\begin{itemize}
+	\item não existam utentes com \textit{id's} repetidos
+    \item não existam prestadores com \textit{id's} repetidos
+    \item não existam instituições com \textit{id's} repetidos
+    \item um prestador tenha que pertencer obrigatoriamente a uma instituição da base de conhecimento
+    \item não existam cuidados repetidos
+    \item seja garantida a existência de um utente
+    \item seja garantida a existência de um prestador
+    \item não existam cuidados referentes a um utente
+    \item não existam cuidados referentes a um prestador
+    \item não existem prestadores registados numa instituição
+\end{itemize}
+
+
+\subsubsection{Funções Auxiliares}
+O desenvolvimento do sistema em causa envolveu, por vezes, o uso de regras que partilhavam certas operações entre si, como tal estas operações foram degeneradas em regras individuais por forma a reduzir a quantidade de código necessária. As operações referidas encontram-se descritas de seguida:
+\begin{itemize}
+	\item Encontra todos os predicados(Questão) que sejam satisfeitos ao efetuar o \textit{backtracking} tendo Formato em conta
+\newline
+solucoes : Formato, Questao, Soluçoes $\to$ \{V,F\}
+	\item Função para somar uma lista      
+\newline
+inserir: Termo $\to$ \{V,F\}
+	\item Remover conhecimento
+\newline
+remover: Termo $\to$ \{V,F\}
+	\item Regra de teste dos invariantes correspondentes
+\newline
+test: Lista $\to$ \{V,F\}
+\end{itemize}
+
+\newpage
+
+\vspace*{\fill}
+\section{Conclusões e Sugestões}
+Para concluir, os objetivos propostos pelo enunciado foram cumpridos mas também foram adicionadas novas funcionalidades com o propósito de fundamentar a base de conhecimento.Ainda assim é possível adicionar novas funcionalidades extras ao trabalho apresentado para enriquecer ainda mais a \textit{Health Care System}.
+\vspace*{\fill}
+
+\newpage
+
+\begin{thebibliography}{10}
+  \bibitem{JCMLNT}
+    MARTINS, José Carlos Lima,
+    \textit{Notas Teóricas},
+    José Carlos Lima Martins, 
+    2018.
+  \bibitem{JPFVNT}
+    VIEIRA, João Pedro Ferreira,
+    \textit{Notas Teóricas},
+    João Pedro Ferreira Vieira, 
+    2018.
+  \bibitem{MMQNT}
+    QUARESMA, Miguel Miranda,
+    \textit{Notas Teóricas},
+    Miguel Miranda Quaresma, 
+    2018.
+  \bibitem{SPLBNT}
+    BARBOSA, Simão Paulo Leal,
+    \textit{Notas Teóricas},
+    Simão Paulo Leal Barbosa, 
+    2018. 
+\end{thebibliography}
+\end{document}
