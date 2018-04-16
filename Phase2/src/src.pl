@@ -32,9 +32,18 @@ demoComp((Q1;Q2),R):-
 demoComp(QS,R):- demo(QS,R).
 
 conjuncao(R1,R2,verdadeiro):- R1==verdadeiro, R2==verdadeiro.
-conjuncao(R1,R2,R):- 
+conjuncao(R1,R2,falso):- R1==falso.
+conjuncao(R1,R2,falso):- R2==falso.
+conjuncao(R1,R2,desconhecido):- R1==desconhecido, R2==verdadeiro.
+conjuncao(R1,R2,desconhecido):- R1==verdadeiro, R2==desconhecido.
+conjuncao(R1,R2,desconhecido):- R1==desconhecido, R2==desconhecido.
 
-disjuncao(R1,R2,R):-
+disjuncao(R1,R2,falso):- R1==falso, R2==falso.
+disjuncao(R1,R2,verdadeiro):- R1==verdadeiro.
+disjuncao(R1,R2,verdadeiro):- R2==verdadeiro.
+disjuncao(R1,R2,desconhecido):- R1==desconhecido, R2==falso.
+disjuncao(R1,R2,desconhecido):- R1==falso, R2==desconhecido.
+disjuncao(R1,R2,desconhecido):- R1==desconhecido, R2==desconhecido.
 
 %--------------------------------------------------------------------------------------------
 % Extensao do meta-predicado nao: Questao -> {V,F}
@@ -172,28 +181,28 @@ excecao(27,clinica_Armandes,clinica,setubal).
 utente(28,zulmira,45,xpto5).
 excecao(utente(IdU,N,I,M)):- utente(IdU,N,I,xpto5).
 nulo(xpto5).
-+utente(IdU,N,I,M):: (solucoes(IdU,(utente(IdU,zulmira,I,M),nao(nulo(M))),L),
++utente(IdU,N,I,M):: (solucoes(M,(utente(28,zulmira,45,M),nao(nulo(M))),L),
                      comprimento(L,N),
                      N==0).
 
 prestador(29,xpto6,medicina_Geral,centro_Caranda).
 excecao(prestador(IdP,N,E,I)):- prestador(IdP,xpto6,E,I).
 nulo(xpto6).
-+prestador(IdP,N,E,I):: (solucoes(E,(prestador(29,N,E,I),nao(nulo(N))),L),
++prestador(IdP,N,E,I):: (solucoes(N,(prestador(29,N,medicina_Geral,centro_Caranda),nao(nulo(N))),L),
                         comprimento(L,N),
                         N==0).
 
 cuidado(2017-10-17,5,4,consulta,xpto7).
 excecao(cuidado(D,IdU,IdP,Desc,C)):- cuidado(D,IdU,IdP,Desc,xpto7).
 nulo(xpto7).
-+cuidado(D,IdU,IdP,Desc,C):: (solucoes(D,(cuidado(2017-10-17,5,4,Desc,C),nao(nulo(C))),L),
++cuidado(D,IdU,IdP,Desc,C):: (solucoes(C,(cuidado(2017-10-17,5,4,consulta,C),nao(nulo(C))),L),
                              comprimento(L,N),
                              N==0).
 
 instituicao(30,clinica_Antunes,clinica,xpto8).
 excecao(instituicao(IdI,N,T,C)):- instituicao(IdI,N,T,xpto8).
 nulo(xpto8).
-+instituicao(IdI,N,T,C):: (solucoes(IdI,(instituicao(30,N,T,C),nao(nulo(C))),L),
++instituicao(IdI,N,T,C):: (solucoes(C,(instituicao(30,clinica_Antunes,clinica,C),nao(nulo(C))),L),
                           comprimento(L,N),
                           N==0).
 
