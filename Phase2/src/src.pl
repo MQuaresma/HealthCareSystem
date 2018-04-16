@@ -181,30 +181,30 @@ excecao(27,clinica_Armandes,clinica,setubal).
 utente(28,zulmira,45,xpto5).
 excecao(utente(IdU,N,I,M)):- utente(IdU,N,I,xpto5).
 nulo(xpto5).
-+utente(IdU,N,I,M):: (solucoes(M,(utente(28,zulmira,45,M),nao(nulo(M))),L),
-                     comprimento(L,N),
-                     N==0).
++utente(IdU,No,I,M):: (solucoes(M,(utente(28,zulmira,45,M),nao(nulo(M))),L),
+                       len(L,N),
+                       N==0).
 
 prestador(29,xpto6,medicina_Geral,centro_Caranda).
 excecao(prestador(IdP,N,E,I)):- prestador(IdP,xpto6,E,I).
 nulo(xpto6).
-+prestador(IdP,N,E,I):: (solucoes(N,(prestador(29,N,medicina_Geral,centro_Caranda),nao(nulo(N))),L),
-                        comprimento(L,N),
-                        N==0).
++prestador(IdP,No,E,I):: (solucoes(No,(prestador(29,No,medicina_Geral,centro_Caranda),nao(nulo(No))),L),
+                          len(L,N),
+                          N==0).
 
 cuidado(2017-10-17,5,4,consulta,xpto7).
 excecao(cuidado(D,IdU,IdP,Desc,C)):- cuidado(D,IdU,IdP,Desc,xpto7).
 nulo(xpto7).
 +cuidado(D,IdU,IdP,Desc,C):: (solucoes(C,(cuidado(2017-10-17,5,4,consulta,C),nao(nulo(C))),L),
-                             comprimento(L,N),
-                             N==0).
+                              len(L,N),
+                              N==0).
 
 instituicao(30,clinica_Antunes,clinica,xpto8).
 excecao(instituicao(IdI,N,T,C)):- instituicao(IdI,N,T,xpto8).
 nulo(xpto8).
-+instituicao(IdI,N,T,C):: (solucoes(C,(instituicao(30,clinica_Antunes,clinica,C),nao(nulo(C))),L),
-                          comprimento(L,N),
-                          N==0).
++instituicao(IdI,No,T,C):: (solucoes(C,(instituicao(30,clinica_Antunes,clinica,C),nao(nulo(C))),L),
+                            len(L,N),
+                            N==0).
 
 %--------------------------------------------------------------------------------------------
 %Invariantes estruturais
