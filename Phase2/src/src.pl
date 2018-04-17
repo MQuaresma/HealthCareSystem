@@ -385,6 +385,8 @@ naoNuloL([utente(IdU,N,I,M)|T]):-naoNulo(N,I,M), naoNuloL(T).
 naoNuloL([-utente(IdU,N,I,M)|T]):-naoNulo(N,I,M), naoNuloL(T).
 naoNuloL([excecao(utente(IdU,N,I,M))|T]):-naoNulo(N,I,M), naoNuloL(T).
 
+% Utente
+
 evolucaoLearn(utente(IdU,Nome,Idade,Morada)):-
                         solucoes(utente(IdU,N,I,M),utente(IdU,N,I,M),L1),
                         naoNuloL(L1),
@@ -412,6 +414,98 @@ evolucaoLearn(excecao(utente(IdU,Nome,Idade,Morada))):-
                         removeL(L1),
                         removeL(L2),
                         inserir(excecao(utente(IdU,Nome,Idade,Morada))).
+
+% Prestador
+
+evolucaoLearn(prestador(IdP,Nome,Especialidade,Inst)):-
+                        solucoes(prestador(IdP,N,E,I),prestador(IdP,N,E,I),L1),
+                        naoNuloL(L1),
+                        solucoes(-prestador(IdP,N2,E2,I2),-prestador(IdP,N2,E2,I2),L2),
+                        solucoes(excecao(prestador(IdP,N3,E3,I3)),excecao(prestador(IdP,N3,E3,I3)),L3),
+                        removeL(L1),
+                        removeL(L2),
+                        removeL(L3),
+                        inserir(prestador(IdP,Nome,Especialidade,Inst)).
+
+evolucaoLearn(-prestador(IdP,Nome,Especialidade,Inst)):-
+                        solucoes(prestador(IdP,N,E,I),prestador(IdP,N,E,I),L1),
+                        naoNuloL(L1),
+                        solucoes(-prestador(IdP,N2,E2,I2),-prestador(IdP,N2,E2,I2),L2),
+                        solucoes(excecao(prestador(IdP,N3,E3,I3)),excecao(prestador(IdP,N3,E3,I3)),L3),
+                        removeL(L1),
+                        removeL(L2),
+                        removeL(L3),
+                        inserir(-prestador(IdP,Nome,Especialidade,Inst)).
+
+evolucaoLearn(excecao(prestador(IdP,Nome,Especialidade,Inst))):-
+                        solucoes(prestador(IdP,N,E,I),prestador(IdP,N,E,I),L1),
+                        naoNuloL(L1),
+                        solucoes(-prestador(IdP,N2,E2,I2),-prestador(IdP,N2,E2,I2),L2),
+                        removeL(L1),
+                        removeL(L2),
+                        inserir(excecao(prestador(IdP,Nome,Especialidade,Inst))).
+
+% Cuidado
+
+evolucaoLearn(cuidado(Data,IdU,IdP,Desc,Custo)):-
+                        solucoes(cuidado(Data,IdU,IdP,Desc,Custo),cuidado(Data,IdU,IdP,Desc,Custo),L1),
+                        naoNuloL(L1),
+                        solucoes(-cuidado(Data,IdU,IdP,Desc,Custo),-cuidado(Data,IdU,IdP,Desc,Custo),L2),
+                        solucoes(excecao(cuidado(Data,IdU,IdP,Desc,Custo)),excecao(cuidado(Data,IdU,IdP,Desc,Custo)),L3),
+                        removeL(L1),
+                        removeL(L2),
+                        removeL(L3),
+                        inserir(cuidado(Data,IdU,IdP,Desc,Custo)).
+
+evolucaoLearn(-cuidado(Data,IdU,IdP,Desc,Custo)):-
+                        solucoes(cuidado(Data,IdU,IdP,Desc,Custo),cuidado(Data,IdU,IdP,Desc,Custo),L1),
+                        naoNuloL(L1),
+                        solucoes(-cuidado(Data,IdU,IdP,Desc,Custo),-cuidado(Data,IdU,IdP,Desc,Custo),L2),
+                        solucoes(excecao(cuidado(Data,IdU,IdP,Desc,Custo)),excecao(cuidado(Data,IdU,IdP,Desc,Custo)),L3),
+                        removeL(L1),
+                        removeL(L2),
+                        removeL(L3),
+                        inserir(-cuidado(Data,IdU,IdP,Desc,Custo)).
+
+evolucaoLearn(excecao(cuidado(Data,IdU,IdP,Desc,Custo))):-
+                        solucoes(cuidado(Data,IdU,IdP,Desc,Custo),cuidado(Data,IdU,IdP,Desc,Custo),L1),
+                        naoNuloL(L1),
+                        solucoes(-cuidado(Data,IdU,IdP,Desc,Custo),-cuidado(Data,IdU,IdP,Desc,Custo),L2),
+                        removeL(L1),
+                        removeL(L2),
+                        inserir(excecao(cuidado(Data,IdU,IdP,Desc,Custo))).
+
+% Instituição
+
+evolucaoLearn(instituicao(IdI,Nome,Tipo,Cidade)):-
+                        solucoes(instituicao(IdI,N,T,C),instituicao(IdI,N,T,C),L1),
+                        naoNuloL(L1),
+                        solucoes(-instituicao(IdI,N2,T2,C2),-instituicao(IdI,N2,T2,C2),L2),
+                        solucoes(excecao(instituicao(IdI,N3,T3,C3)),excecao(instituicao(IdI,N3,T3,C3)),L3),
+                        removeL(L1),
+                        removeL(L2),
+                        removeL(L3),
+                        inserir(instituicao(IdI,Nome,Tipo,Cidade)).
+
+evolucaoLearn(-instituicao(IdI,Nome,Tipo,Cidade)):-
+                        solucoes(instituicao(IdI,N,T,C),instituicao(IdI,N,T,C),L1),
+                        naoNuloL(L1),
+                        solucoes(-instituicao(IdI,N2,T2,C2),-instituicao(IdI,N2,T2,C2),L2),
+                        solucoes(excecao(instituicao(IdI,N3,T3,C3)),excecao(instituicao(IdI,N3,T3,C3)),L3),
+                        removeL(L1),
+                        removeL(L2),
+                        removeL(L3),
+                        inserir(-instituicao(IdI,Nome,Tipo,Cidade)).
+
+evolucaoLearn(excecao(instituicao(IdI,Nome,Tipo,Cidade))):-
+                        solucoes(instituicao(IdI,N,T,C),instituicao(IdI,N,T,C),L1),
+                        naoNuloL(L1),
+                        solucoes(-instituicao(IdI,N2,T2,C2),-instituicao(IdI,N2,T2,C2),L2),
+                        removeL(L1),
+                        removeL(L2),
+                        inserir(excecao(instituicao(IdI,Nome,Tipo,Cidade))).
+
+%--------------------------------------------------------------------------------------------
 
 involucao(Termo):-
     solucoes(Inv,-Termo::Inv,S),
