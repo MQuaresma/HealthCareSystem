@@ -523,7 +523,7 @@ evolucaoLearn(excecao(instituicao(IdI,Nome,Tipo,Cidade))):-
 evolucaoLearn(nulo(T)):-
         nao(nulo(T)),
         inserir(nulo(T)).
-)
+
 %WARNING - permite duplicação, usar com muito cuidado, permite a inserçao de regras de exceção 
 %evolucaoLearnExc: excecao(P),Q -> {V,F}
 evolucaoLearnExc(excecao(P),Q):-
