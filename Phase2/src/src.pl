@@ -67,7 +67,8 @@ nao( Questao ).
 :- dynamic prestador/4.
 :- dynamic cuidado/5.
 :- dynamic instituicao/4.
-excecao
+:- dynamic excecao/1.
+
 %--------------------------------------------------------------------------------------------
 %defenição de regras negativas
 % utente: #IdUt, Nome, Idade, Morada -> {V,F}
@@ -373,9 +374,7 @@ evolucaoLearn(utente(IdU,Nome,Idade,Morada)):-
                         solucoes(utente(IdU,N,I,M),utente(IdU,N,I,M),L1),
                         naoNuloL(L1),
                         solucoes(-utente(IdU,N2,I2,M2),-utente(IdU,N2,I2,M2),L2),
-                        naoNuloL(L2),
                         solucoes(excecao(utente(IdU,N3,I3,M3)),excecao(utente(IdU,N3,I3,M3)),L3),
-                        naoNuloL(L3),
                         removeL(L1),
                         removeL(L2),
                         removeL(L3),
@@ -385,9 +384,7 @@ evolucaoLearn(-utente(IdU,Nome,Idade,Morada)):-
                         solucoes(utente(IdU,N,I,M),utente(IdU,N,I,M),L1),
                         naoNuloL(L1),
                         solucoes(-utente(IdU,N2,I2,M2),-utente(IdU,N2,I2,M2),L2),
-                        naoNuloL(L2),
                         solucoes(excecao(utente(IdU,N3,I3,M3)),excecao(utente(IdU,N3,I3,M3)),L3),
-                        naoNuloL(L3),
                         removeL(L1),
                         removeL(L2),
                         removeL(L3),
@@ -397,7 +394,6 @@ evolucaoLearn(excecao(utente(IdU,Nome,Idade,Morada))):-
                         solucoes(utente(IdU,N,I,M),utente(IdU,N,I,M),L1),
                         naoNuloL(L1),
                         solucoes(-utente(IdU,N2,I2,M2),-utente(IdU,N2,I2,M2),L2),
-                        naoNuloL(L2),
                         removeL(L1),
                         removeL(L2),
                         inserir(excecao(utente(IdU,Nome,Idade,Morada))).
@@ -428,7 +424,8 @@ inserir(P):-retract(P),!,fail.
 remover(P):-retract(P).
 
 removeL([]).
-removeL([A|C]) :- remover(A), removeL(C).
+removeL([A|C]) :-A, remover(A), removeL(C).
+removeL([A|C]) :- removeL(C).
 
 %Regra de teste dos invariantes correspondentes
 %test: Lista -> {V,F}
