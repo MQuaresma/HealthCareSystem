@@ -394,9 +394,22 @@ naoNulo(X,Y,Z):-
 
 %verifica se de uma dada lista os valores dos factos sao todos nao nulos: Lista -> {V,F} 
 naoNuloL([]).
+
 naoNuloL([utente(IdU,N,I,M)|T]):-naoNulo(N,I,M), naoNuloL(T).
 naoNuloL([-utente(IdU,N,I,M)|T]):-naoNulo(N,I,M), naoNuloL(T).
 naoNuloL([excecao(utente(IdU,N,I,M))|T]):-naoNulo(N,I,M), naoNuloL(T).
+
+naoNuloL([prestador(IdP,N,E,I)|T]):-naoNulo(N,E,I), naoNuloL(T).
+naoNuloL([-prestador(IdP,N,E,I)|T]):-naoNulo(N,E,I), naoNuloL(T).
+naoNuloL([excecao(prestador(IdP,N,E,I))|T]):-naoNulo(N,E,I), naoNuloL(T).
+
+naoNuloL([cuidado(D,IdU,IdP,Desc,C)|T]):-naoNulo(D,IdU,IdP), nao(nulo(Desc)),nao(nulo(C)), naoNuloL(T).
+naoNuloL([-cuidado(D,IdU,IdP,Desc,C)|T]):-naoNulo(D,IdU,IdP), nao(nulo(Desc)),nao(nulo(C)), naoNuloL(T).
+naoNuloL([excecao(cuidado(D,IdU,IdP,Desc,C))|T]):-naoNulo(D,IdU,IdP), nao(nulo(Desc)),nao(nulo(C)), naoNuloL(T).
+
+naoNuloL([instituicao(IdI,N,T,C)|T]):-naoNulo(N,T,C), naoNuloL(T).
+naoNuloL([-instituicao(IdI,N,T,C)|T]):-naoNulo(N,T,C), naoNuloL(T).
+naoNuloL([excecao(instituicao(IdI,N,T,C))|T]):-naoNulo(N,T,C), naoNuloL(T).
 
 %Utente
 
