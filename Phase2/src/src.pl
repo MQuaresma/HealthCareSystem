@@ -359,29 +359,48 @@ evolucao(Termo):-
     inserir(Termo),
     test(S).
 
-tipo(utente(IdU,Nome,Idade,Morada),L):-
-                        solucoes(utente(IdU,N,I,M),utente(IdU,N,I,M),L1),
-                        solucoes(-utente(IdU,N,I,M),-utente(IdU,N,I,M),L2),
-                        solucoes(excecao(utente(IdU,N,I,M)),excecao(utente(IdU,N,I,M)),L3),
-                        concatenar(L1,L2,L4),
-                        concatenar(L3,L4,L).
+naoNulo(X,Y,Z):-
+    nao(nulo(X)),
+    nao(nulo(Y)),
+    nao(nulo(Z)).
 
-tipo(-utente(IdU,Nome,Idade,Morada),L):-
-                        solucoes(utente(IdU,N,I,M),utente(IdU,N,I,M),L1),
-                        solucoes(-utente(IdU,N,I,M),-utente(IdU,N,I,M),L2),
-                        solucoes(excecao(utente(IdU,N,I,M)),excecao(utente(IdU,N,I,M)),L3),
-                        concatenar(L1,L2,L4),
-                        concatenar(L3,L4,L).
+naoNuloL([]).
+naoNuloL([utente(IdU,N,I,M)|T]):-naoNulo(N,I,M), naoNuloL(T).
+naoNuloL([-utente(IdU,N,I,M)|T]):-naoNulo(N,I,M), naoNuloL(T).
+naoNuloL([excecao(utente(IdU,N,I,M))|T]):-naoNulo(N,I,M), naoNuloL(T).
 
-tipo(excecao(utente(IdU,Nome,Idade,Morada)),L):-
+evolucaoLearn(utente(IdU,Nome,Idade,Morada)):-
                         solucoes(utente(IdU,N,I,M),utente(IdU,N,I,M),L1),
-                        solucoes(utente(IdU,N,I,M),excecao(utente(IdU,N,I,M)),L2),
-                        concatenar(L1,L2,L).
+                        naoNuloL(L1),
+                        solucoes(-utente(IdU,N2,I2,M2),-utente(IdU,N2,I2,M2),L2),
+                        naoNuloL(L2),
+                        solucoes(excecao(utente(IdU,N3,I3,M3)),excecao(utente(IdU,N3,I3,M3)),L3),
+                        naoNuloL(L3),
+                        removeL(L1),
+                        removeL(L2),
+                        removeL(L3),
+                        inserir(utente(IdU,Nome,Idade,Morada)).
 
-evolucaoLearn(Termo):-
-    tipo(Termo,L),
-    removeL(L),
-    inserir(Termo).
+evolucaoLearn(-utente(IdU,Nome,Idade,Morada)):-
+                        solucoes(utente(IdU,N,I,M),utente(IdU,N,I,M),L1),
+                        naoNuloL(L1),
+                        solucoes(-utente(IdU,N2,I2,M2),-utente(IdU,N2,I2,M2),L2),
+                        naoNuloL(L2),
+                        solucoes(excecao(utente(IdU,N3,I3,M3)),excecao(utente(IdU,N3,I3,M3)),L3),
+                        naoNuloL(L3),
+                        removeL(L1),
+                        removeL(L2),
+                        removeL(L3),
+                        inserir(-utente(IdU,Nome,Idade,Morada)).
+
+evolucaoLearn(excecao(utente(IdU,Nome,Idade,Morada))):-
+                        solucoes(utente(IdU,N,I,M),utente(IdU,N,I,M),L1),
+                        naoNuloL(L1),
+                        solucoes(-utente(IdU,N2,I2,M2),-utente(IdU,N2,I2,M2),L2),
+                        naoNuloL(L2),
+                        removeL(L1),
+                        removeL(L2),
+                        inserir(excecao(utente(IdU,Nome,Idade,Morada))).
 
 involucao(Termo):-
     solucoes(Inv,-Termo::Inv,S),
