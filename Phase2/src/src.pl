@@ -154,30 +154,42 @@ instituicao(6,clinica_SantaTecla,clinica,braga).
 
 %conhecimento imperfeito
 %Valor Nulo Incerto (Desconhecido)
+
+% a utente Madalena tem 54 anos de idade e detem o id 22, no entanto é desconhecida a sua morada.
 utente(22,madalena,54,xpto1).
 excecao(utente(IdU,N,I,M)):- utente(IdU,N,I,xpto1).
 
+% é sabido que existe um prestador com o id 23, ortopedia como sua especialidade e pertencente ao Hospital de Braga, ainda que não se conheça o seu nome.
 prestador(23,xpto2,ortopedia,hospital_Braga).
 excecao(prestador(IdP,N,E,I)):- prestador(IdP,xpto2,E,I).
 
+% o utente com o id 3 recebeu um cuidado do prestador 3 no dia 23 de Maio de 2017 tendo como custo 20 euros, desconhece-se a descrição do serviço prestado. 
 cuidado(2017-05-23,3,3,xpto3,20).
 excecao(cuidado(D,IdU,IdP,Desc,C)):- cuidado(D,IdU,IdP,xpto3,C).
 
+% a Clinica Fernandes encontra-se representada na base de conhecimento pelo número 24, não sendo conhecida a cidade em que esta clínica está inserida. 
 instituicao(24,clinica_Fernandes,clinica,xpto4).
 excecao(instituicao(IdI,N,T,C)):- instituicao(IdI,N,T,xpto4).
 
 %Valor Nulo Impreciso (Desconhecido, mas de um conjunto determinado de hipóteses)
+
+% a Mariana é de Leiria e encontra-se representada na base de conhecimento pelo número 25, sabe-se que a sua idade encontra-se entre os 18 e os 34 anos.
 excecao(utente(25,mariana,I,leiria)):- I>=18, I=<34.
 
+% o prestador com o id 26 tem como especialidade Enfermagem e trabalha no Hospital de Coimbra, não se sabe se o seu nome é Rute ou Rita.
 excecao(prestador(26,rute,enfermagem,hospital_Coimbra)).
 excecao(prestador(26,rita,enfermagem,hospital_Coimbra)).
 
+% a consulta realizada no dia 2 de Agosto de 2017 pelo prestador 4 ao utente 2 teve um custo no intervalo [10,24] euros.
 excecao(cuidado(2017-08-02,2,4,consulta,C)):- C>=10, C=<24.
 
+% não se sabe se a Clínica Armandes com o id 27 é uma clínica de Lisboa ou de Setúbal.
 excecao(instituicao(27,clinica_Armandes,clinica,lisboa)).
 excecao(instituicao(27,clinica_Armandes,clinica,setubal)).
 
 %Valor Nulo Interdito (Desconhecido e não permitido conhecer)
+
+% o utente representado pelo número 28 tem como seu nome Zulmira e tem 45 anos, no entanto, ninguém pode conhecer a sua morada por vontade da mesma.
 utente(28,zulmira,45,xpto5).
 excecao(utente(IdU,N,I,M)):- utente(IdU,N,I,xpto5).
 nulo(xpto5).
@@ -185,6 +197,7 @@ nulo(xpto5).
                        len(L,N),
                        N==0).
 
+% o Centro Carandá tem ao seu dispor um prestador com especialidade em Medicina Geral e cujo seu número no sistema é o 26, este Centro não revela o nome do mesmo de forma a proteger os seus melhores prestadores.
 prestador(29,xpto6,medicina_Geral,centro_Caranda).
 excecao(prestador(IdP,N,E,I)):- prestador(IdP,xpto6,E,I).
 nulo(xpto6).
@@ -192,6 +205,7 @@ nulo(xpto6).
                           len(L,N),
                           N==0).
 
+% calcula-se que o maior custo alguma vez praticado por um cuidado tenha sido realizado no dia 17 de Outubro de 2017 pelo prestador 4 ao utente 5 com a descrição "consulta"; face à polémica instalada o custo da mesma encontra-se completamente em segredo.
 cuidado(2017-10-17,5,4,consulta,xpto7).
 excecao(cuidado(D,IdU,IdP,Desc,C)):- cuidado(D,IdU,IdP,Desc,xpto7).
 nulo(xpto7).
@@ -199,6 +213,7 @@ nulo(xpto7).
                               len(L,N),
                               N==0).
 
+% a Clínica Antunes abriu à pouco tempo e é representada na base de conhecimento pelo número 30, no entanto, a administração desta clínica prefere que pelo menos por enquanto a cidade onde esta se encontra seja interdita e impossível de conhecer.
 instituicao(30,clinica_Antunes,clinica,xpto8).
 excecao(instituicao(IdI,N,T,C)):- instituicao(IdI,N,T,xpto8).
 nulo(xpto8).
