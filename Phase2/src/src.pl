@@ -228,7 +228,7 @@ nulo(xpto8).
 %--------------------------------------------------------------------------------------------
 %Invariantes estruturais
 
-%Utente com Id nao existe/repetido
+%Impede a evolução do utente(positivo) caso ja haja conhecimento positivo ou negativo ou desconhecido com o mesmo Id
 +utente(Id,Nome,Idade,Morada)::(solucoes((X,Y,Z),utente(Id,X,Y,Z),S1),
                                 solucoes((X,Y,Z),-utente(Id,X,Y,Z),S2),
                                 solucoes((X,Y,Z),excecao(utente(Id,X,Y,Z)),S3),
@@ -238,7 +238,7 @@ nulo(xpto8).
                                 N is N1 + N2 + N3,
                                 N=<1).
 
-%Prestador com Id nao existe/repetido
+%Impede a evolução do prestador(positivo) caso ja haja conhecimento positivo ou negativo ou desconhecido com o mesmo Id
 +prestador(Id,Nome,Esp,Inst)::(solucoes((X,Y,Z),prestador(Id,X,Y,Z),S1),
                                solucoes((X,Y,Z),-prestador(Id,X,Y,Z),S2),
                                solucoes((X,Y,Z),excecao(prestador(Id,X,Y,Z)),S3),
@@ -253,7 +253,7 @@ nulo(xpto8).
                                 len(S,N),
                                 N>=1).
 
-%Cuidado nao existe/repetido
+%Impede a evolução do cuidado(positivo) caso ja haja conhecimento positivo ou negativo ou desconhecido
 +cuidado(Data,IdU,IdP,Desc,Custo)::(solucoes((Data,IdU,IdP,Desc,Custo),cuidado(Data,IdU,IdP,Desc,Custo),S1),
                                     solucoes((Data,IdU,IdP,Desc,Custo),-cuidado(Data,IdU,IdP,Desc,Custo),S2),
                                     solucoes((Data,IdU,IdP,Desc,Custo),excecao(cuidado(Data,IdU,IdP,Desc,Custo)),S3),
@@ -273,7 +273,7 @@ nulo(xpto8).
                                     len(S,N),
                                     N>=1).
 
-%Instituicao com Id nao existe/repetido
+%Impede a evolução da instituicao(positivo) caso ja haja conhecimento positivo ou negativo ou desconhecido com o mesmo Id
 +instituicao(Id,Nome,Tipo,Cidade)::(solucoes((Nome,Tipo,Cidade),instituicao(Id,Nome,Tipo,Cidade),S1),
                                     solucoes((Nome,Tipo,Cidade),-instituicao(Id,Nome,Tipo,Cidade),S2),
                                     solucoes((Nome,Tipo,Cidade),excecao(instituicao(Id,Nome,Tipo,Cidade)),S3),
@@ -298,7 +298,7 @@ nulo(xpto8).
                                     len(S,N),
                                     N==0).
 
-%Utente com Id nao existe/repetido
+%Impede a evolução do utente(negativo) caso ja haja conhecimento positivo ou negativo ou desconhecido com o mesmo Id
 +(-utente(Id,Nome,Idade,Morada))::(solucoes((X,Y,Z),utente(Id,X,Y,Z),S1),
                                 solucoes((X,Y,Z),-utente(Id,X,Y,Z),S2),
                                 solucoes((X,Y,Z),excecao(utente(Id,X,Y,Z)),S3),
@@ -308,7 +308,7 @@ nulo(xpto8).
                                 N is N1 + N2 + N3,
                                 N=<1).
 
-%Prestador com Id nao existe/repetido
+%Impede a evolução do prestador(negativo) caso ja haja conhecimento positivo ou negativo ou desconhecido com o mesmo Id
 +(-prestador(Id,Nome,Esp,Inst))::(solucoes((X,Y,Z),prestador(Id,X,Y,Z),S1),
                                solucoes((X,Y,Z),-prestador(Id,X,Y,Z),S2),
                                solucoes((X,Y,Z),excecao(prestador(Id,X,Y,Z)),S3),
@@ -318,7 +318,7 @@ nulo(xpto8).
                                N is N1 + N2 + N3,
                                N=<1).
 
-%Cuidado nao existe/repetido
+%Impede a evolução do cuidado(negativo) caso ja haja conhecimento positivo ou negativo ou desconhecido
 +(-cuidado(Data,IdU,IdP,Desc,Custo))::(solucoes((Data,IdU,IdP,Desc,Custo),cuidado(Data,IdU,IdP,Desc,Custo),S1),
                                     solucoes((Data,IdU,IdP,Desc,Custo),-cuidado(Data,IdU,IdP,Desc,Custo),S2),
                                     solucoes((Data,IdU,IdP,Desc,Custo),excecao(cuidado(Data,IdU,IdP,Desc,Custo)),S3),
@@ -328,7 +328,7 @@ nulo(xpto8).
                                     N is N1 + N2 + N3,
                                     N=<1).
 
-%Instituicao com Id nao existe/repetido
+%Impede a evolução do instituicao(negativo) caso ja haja conhecimento positivo ou negativo ou desconhecido com o mesmo Id
 +(-instituicao(Id,Nome,Tipo,Cidade))::(solucoes((Nome,Tipo,Cidade),instituicao(Id,Nome,Tipo,Cidade),S1),
                                     solucoes((Nome,Tipo,Cidade),-instituicao(Id,Nome,Tipo,Cidade),S2),
                                     solucoes((Nome,Tipo,Cidade),excecao(instituicao(Id,Nome,Tipo,Cidade),S3)),
@@ -338,7 +338,7 @@ nulo(xpto8).
                                     N is N1 + N2 + N3,
                                     N=<1).
 
-%Utente com Id nao existe/repetido
+%Impede a evolução de exceção utente(desconhecido) caso ja haja conhecimento positivo ou negativo com o mesmo Id
 +excecao(utente(Id,Nome,Idade,Morada))::(solucoes((X,Y,Z),utente(Id,X,Y,Z),S1),
                                          solucoes((X,Y,Z),-utente(Id,X,Y,Z),S2),
                                          len(S1,N1),
@@ -346,7 +346,7 @@ nulo(xpto8).
                                          N is N1 + N2,
                                          N=<1).
 
-%Prestador com Id nao existe/repetido
+%Impede a evolução de exceção prestador(desconhecido) caso ja haja conhecimento positivo ou negativo com o mesmo Id
 +excecao(prestador(Id,Nome,Esp,Inst))::(solucoes((X,Y,Z),prestador(Id,X,Y,Z),S1),
                                         solucoes((X,Y,Z),-prestador(Id,X,Y,Z),S2),
                                         len(S1,N1),
@@ -354,7 +354,7 @@ nulo(xpto8).
                                         N is N1 + N2,
                                         N=<1).
 
-%Cuidado nao existe/repetido
+%Impede a evolução de exceção cuidado(desconhecido) caso ja haja conhecimento positivo ou negativo
 +excecao(cuidado(Data,IdU,IdP,Desc,Custo))::(solucoes((Data,IdU,IdP,Desc,Custo),cuidado(Data,IdU,IdP,Desc,Custo),S1),
                                              solucoes((Data,IdU,IdP,Desc,Custo),-cuidado(Data,IdU,IdP,Desc,Custo),S2),
                                              len(S1,N1),
@@ -362,7 +362,7 @@ nulo(xpto8).
                                              N is N1 + N2,
                                              N=<1).
 
-%Instituicao com Id nao existe/repetido
+%Impede a evolução de exceção instituicao(desconhecido) caso ja haja conhecimento positivo ou negativo com o mesmo Id
 +excecao(instituicao(Id,Nome,Tipo,Cidade))::(solucoes((Nome,Tipo,Cidade),instituicao(Id,Nome,Tipo,Cidade),S1),
                                              solucoes((Nome,Tipo,Cidade),-instituicao(Id,Nome,Tipo,Cidade),S2),
                                              len(S1,N1),
