@@ -68,6 +68,8 @@ nao( Questao ).
 :- dynamic cuidado/5.
 :- dynamic instituicao/4.
 :- dynamic excecao/1.
+:- dynamic nulo/1.
+:- dynamic (::)/2.
 
 %--------------------------------------------------------------------------------------------
 %defenição de regras negativas
@@ -375,11 +377,13 @@ evolucao(Termo):-
     inserir(Termo),
     test(S).
 
+%verifica se todos valores passados como parametro são não nulos, X,Y,Z -> {V,F}
 naoNulo(X,Y,Z):-
     nao(nulo(X)),
     nao(nulo(Y)),
     nao(nulo(Z)).
 
+%verifica se de uma dada lista os valores dos factos sao todos nao nulos Lista -> {V,F} 
 naoNuloL([]).
 naoNuloL([utente(IdU,N,I,M)|T]):-naoNulo(N,I,M), naoNuloL(T).
 naoNuloL([-utente(IdU,N,I,M)|T]):-naoNulo(N,I,M), naoNuloL(T).
@@ -389,7 +393,7 @@ evolucaoLearn(utente(IdU,Nome,Idade,Morada)):-
                         solucoes(utente(IdU,N,I,M),utente(IdU,N,I,M),L1),
                         naoNuloL(L1),
                         solucoes(-utente(IdU,N2,I2,M2),-utente(IdU,N2,I2,M2),L2),
-                        solucoes(excecao(utente(IdU,N3,I3,M3)),excecao(utente(IdU,N3,I3,M3)),L3),
+                        sddolucoes(excecao(utente(IdU,N3,I3,M3)),excecao(utente(IdU,N3,I3,M3)),L3),
                         removeL(L1),
                         removeL(L2),
                         removeL(L3),
@@ -412,6 +416,19 @@ evolucaoLearn(excecao(utente(IdU,Nome,Idade,Morada))):-
                         removeL(L1),
                         removeL(L2),
                         inserir(excecao(utente(IdU,Nome,Idade,Morada))).
+
+%inserção de valores nulos de modo a permitir construir conhecimento interdito nulo(T) -> {V,F}
+evolucaoLearn(nulo(T)):-
+        nao(nulo(T)),
+        inserir(nulo(T)).
+)
+%WARNING - permite duplicação, usar com muito cuidado, permite a inserçao de regras de exceção excecao(P),Q -> {V,F}
+evolucaoLearnExc(excecao(P),Q):-
+        assert((excecao(P):-Q)).
+
+%WARNING - permite duplicação, usar com muito cuidado, permite a inserçao de invariantes Termo, Invariante -> {V,F}
+evolucaoLearnI(T,I):-
+        assert(T::I).
 
 involucao(Termo):-
     solucoes(Inv,-Termo::Inv,S),
@@ -438,6 +455,7 @@ inserir(P):-retract(P),!,fail.
 %remover: Termo -> {V,F}
 remover(P):-retract(P).
 
+%remove se existe de uma lista de factos
 removeL([]).
 removeL([A|C]) :-A, remover(A), removeL(C).
 removeL([A|C]) :- removeL(C).
@@ -446,7 +464,3 @@ removeL([A|C]) :- removeL(C).
 %test: Lista -> {V,F}
 test([]).
 test([H|T]):-H,test(T).
-
-%concatenar duas listas
-concatenar([],L,L).
-concatenar([C|L],L1,[C|R]):-concatenar(L,L1,R).
