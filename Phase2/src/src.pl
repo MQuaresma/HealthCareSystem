@@ -11,7 +11,23 @@
 :- set_prolog_flag( unknown,fail ).
 
 %--------------------------------------------------------------------------------------------
-% Extensao do meta-predicado demo: Questao,Resposta -> {V,F}
+% Definições iniciais
+
+% op(Precedence, Type, Name)
+:- op( 900,xfy,'::' ).
+
+:- dynamic '-'/1.
+
+:- dynamic utente/4.
+:- dynamic prestador/4.
+:- dynamic cuidado/5.
+:- dynamic instituicao/4.
+:- dynamic excecao/1.
+:- dynamic nulo/1.
+:- dynamic (::)/2.
+
+%-------------------------------------------------------------------------------------------- 
+%Extensao do meta-predicado demo: Questao,Resposta -> {V,F}
 demo( Questao,verdadeiro ) :-
     Questao.
 demo( Questao,falso ) :-
@@ -51,27 +67,12 @@ nao( Questao ) :-
     Questao, !, fail.
 nao( Questao ).
 
-%ver se é preciso: TODO
-%-(-Q):-Q.
-%nao(nao(Q)):-Q.
+%negaçao de negaçao de algo igual a algo
+-(-Q):-Q.
+nao(nao(Q)):-Q.
 
 %--------------------------------------------------------------------------------------------
-% Definições iniciais
 
-% op(Precedence, Type, Name)
-:- op( 900,xfy,'::' ).
-
-:- dynamic '-'/1.
-
-:- dynamic utente/4.
-:- dynamic prestador/4.
-:- dynamic cuidado/5.
-:- dynamic instituicao/4.
-:- dynamic excecao/1.
-:- dynamic nulo/1.
-:- dynamic (::)/2.
-
-%--------------------------------------------------------------------------------------------
 %defenição de regras negativas
 % utente: #IdUt, Nome, Idade, Morada -> {V,F}
 -utente(IdUt, N, I, M):- nao(utente(IdUt,N,I,M)),
@@ -377,23 +378,33 @@ evolucao(Termo):-
     inserir(Termo),
     test(S).
 
-%verifica se todos valores passados como parametro são não nulos, X,Y,Z -> {V,F}
+involucao(Termo):-
+    solucoes(Inv,-Termo::Inv,S),
+    test(S),
+    remover(Termo).
+
+%--------------------------------------------------------------------------------------------
+%Predicados que permitem a aprendizagem de novo conhecimento
+
+%verifica se todos valores passados como parametro são não nulos: X,Y,Z -> {V,F}
 naoNulo(X,Y,Z):-
     nao(nulo(X)),
     nao(nulo(Y)),
     nao(nulo(Z)).
 
-%verifica se de uma dada lista os valores dos factos sao todos nao nulos Lista -> {V,F} 
+%verifica se de uma dada lista os valores dos factos sao todos nao nulos: Lista -> {V,F} 
 naoNuloL([]).
 naoNuloL([utente(IdU,N,I,M)|T]):-naoNulo(N,I,M), naoNuloL(T).
 naoNuloL([-utente(IdU,N,I,M)|T]):-naoNulo(N,I,M), naoNuloL(T).
 naoNuloL([excecao(utente(IdU,N,I,M))|T]):-naoNulo(N,I,M), naoNuloL(T).
 
+%Utente
+
 evolucaoLearn(utente(IdU,Nome,Idade,Morada)):-
                         solucoes(utente(IdU,N,I,M),utente(IdU,N,I,M),L1),
                         naoNuloL(L1),
                         solucoes(-utente(IdU,N2,I2,M2),-utente(IdU,N2,I2,M2),L2),
-                        sddolucoes(excecao(utente(IdU,N3,I3,M3)),excecao(utente(IdU,N3,I3,M3)),L3),
+                        solucoes(excecao(utente(IdU,N3,I3,M3)),excecao(utente(IdU,N3,I3,M3)),L3),
                         removeL(L1),
                         removeL(L2),
                         removeL(L3),
@@ -417,23 +428,111 @@ evolucaoLearn(excecao(utente(IdU,Nome,Idade,Morada))):-
                         removeL(L2),
                         inserir(excecao(utente(IdU,Nome,Idade,Morada))).
 
-%inserção de valores nulos de modo a permitir construir conhecimento interdito nulo(T) -> {V,F}
+%Prestador
+
+evolucaoLearn(prestador(IdP,Nome,Especialidade,Inst)):-
+                        solucoes(prestador(IdP,N,E,I),prestador(IdP,N,E,I),L1),
+                        naoNuloL(L1),
+                        solucoes(-prestador(IdP,N2,E2,I2),-prestador(IdP,N2,E2,I2),L2),
+                        solucoes(excecao(prestador(IdP,N3,E3,I3)),excecao(prestador(IdP,N3,E3,I3)),L3),
+                        removeL(L1),
+                        removeL(L2),
+                        removeL(L3),
+                        inserir(prestador(IdP,Nome,Especialidade,Inst)).
+
+evolucaoLearn(-prestador(IdP,Nome,Especialidade,Inst)):-
+                        solucoes(prestador(IdP,N,E,I),prestador(IdP,N,E,I),L1),
+                        naoNuloL(L1),
+                        solucoes(-prestador(IdP,N2,E2,I2),-prestador(IdP,N2,E2,I2),L2),
+                        solucoes(excecao(prestador(IdP,N3,E3,I3)),excecao(prestador(IdP,N3,E3,I3)),L3),
+                        removeL(L1),
+                        removeL(L2),
+                        removeL(L3),
+                        inserir(-prestador(IdP,Nome,Especialidade,Inst)).
+
+evolucaoLearn(excecao(prestador(IdP,Nome,Especialidade,Inst))):-
+                        solucoes(prestador(IdP,N,E,I),prestador(IdP,N,E,I),L1),
+                        naoNuloL(L1),
+                        solucoes(-prestador(IdP,N2,E2,I2),-prestador(IdP,N2,E2,I2),L2),
+                        removeL(L1),
+                        removeL(L2),
+                        inserir(excecao(prestador(IdP,Nome,Especialidade,Inst))).
+
+%Cuidado
+
+evolucaoLearn(cuidado(Data,IdU,IdP,Desc,Custo)):-
+                        solucoes(cuidado(Data,IdU,IdP,Desc,Custo),cuidado(Data,IdU,IdP,Desc,Custo),L1),
+                        naoNuloL(L1),
+                        solucoes(-cuidado(Data,IdU,IdP,Desc,Custo),-cuidado(Data,IdU,IdP,Desc,Custo),L2),
+                        solucoes(excecao(cuidado(Data,IdU,IdP,Desc,Custo)),excecao(cuidado(Data,IdU,IdP,Desc,Custo)),L3),
+                        removeL(L1),
+                        removeL(L2),
+                        removeL(L3),
+                        inserir(cuidado(Data,IdU,IdP,Desc,Custo)).
+
+evolucaoLearn(-cuidado(Data,IdU,IdP,Desc,Custo)):-
+                        solucoes(cuidado(Data,IdU,IdP,Desc,Custo),cuidado(Data,IdU,IdP,Desc,Custo),L1),
+                        naoNuloL(L1),
+                        solucoes(-cuidado(Data,IdU,IdP,Desc,Custo),-cuidado(Data,IdU,IdP,Desc,Custo),L2),
+                        solucoes(excecao(cuidado(Data,IdU,IdP,Desc,Custo)),excecao(cuidado(Data,IdU,IdP,Desc,Custo)),L3),
+                        removeL(L1),
+                        removeL(L2),
+                        removeL(L3),
+                        inserir(-cuidado(Data,IdU,IdP,Desc,Custo)).
+
+evolucaoLearn(excecao(cuidado(Data,IdU,IdP,Desc,Custo))):-
+                        solucoes(cuidado(Data,IdU,IdP,Desc,Custo),cuidado(Data,IdU,IdP,Desc,Custo),L1),
+                        naoNuloL(L1),
+                        solucoes(-cuidado(Data,IdU,IdP,Desc,Custo),-cuidado(Data,IdU,IdP,Desc,Custo),L2),
+                        removeL(L1),
+                        removeL(L2),
+                        inserir(excecao(cuidado(Data,IdU,IdP,Desc,Custo))).
+
+%Instituição
+
+evolucaoLearn(instituicao(IdI,Nome,Tipo,Cidade)):-
+                        solucoes(instituicao(IdI,N,T,C),instituicao(IdI,N,T,C),L1),
+                        naoNuloL(L1),
+                        solucoes(-instituicao(IdI,N2,T2,C2),-instituicao(IdI,N2,T2,C2),L2),
+                        solucoes(excecao(instituicao(IdI,N3,T3,C3)),excecao(instituicao(IdI,N3,T3,C3)),L3),
+                        removeL(L1),
+                        removeL(L2),
+                        removeL(L3),
+                        inserir(instituicao(IdI,Nome,Tipo,Cidade)).
+
+evolucaoLearn(-instituicao(IdI,Nome,Tipo,Cidade)):-
+                        solucoes(instituicao(IdI,N,T,C),instituicao(IdI,N,T,C),L1),
+                        naoNuloL(L1),
+                        solucoes(-instituicao(IdI,N2,T2,C2),-instituicao(IdI,N2,T2,C2),L2),
+                        solucoes(excecao(instituicao(IdI,N3,T3,C3)),excecao(instituicao(IdI,N3,T3,C3)),L3),
+                        removeL(L1),
+                        removeL(L2),
+                        removeL(L3),
+                        inserir(-instituicao(IdI,Nome,Tipo,Cidade)).
+
+evolucaoLearn(excecao(instituicao(IdI,Nome,Tipo,Cidade))):-
+                        solucoes(instituicao(IdI,N,T,C),instituicao(IdI,N,T,C),L1),
+                        naoNuloL(L1),
+                        solucoes(-instituicao(IdI,N2,T2,C2),-instituicao(IdI,N2,T2,C2),L2),
+                        removeL(L1),
+                        removeL(L2),
+                        inserir(excecao(instituicao(IdI,Nome,Tipo,Cidade))).
+
+%inserção de valores nulos de modo a permitir construir conhecimento interdito
+%evolucaoLearn: nulo(T) -> {V,F}
 evolucaoLearn(nulo(T)):-
         nao(nulo(T)),
         inserir(nulo(T)).
 )
-%WARNING - permite duplicação, usar com muito cuidado, permite a inserçao de regras de exceção excecao(P),Q -> {V,F}
+%WARNING - permite duplicação, usar com muito cuidado, permite a inserçao de regras de exceção 
+%evolucaoLearnExc: excecao(P),Q -> {V,F}
 evolucaoLearnExc(excecao(P),Q):-
         assert((excecao(P):-Q)).
 
-%WARNING - permite duplicação, usar com muito cuidado, permite a inserçao de invariantes Termo, Invariante -> {V,F}
+%WARNING - permite duplicação, usar com muito cuidado, permite a inserçao de invariantes
+%evolucaoLearnI: Termo, Invariante -> {V,F}
 evolucaoLearnI(T,I):-
         assert(T::I).
-
-involucao(Termo):-
-    solucoes(Inv,-Termo::Inv,S),
-    test(S),
-    remover(Termo).
 
 %--------------------------------------------------------------------------------------------
 %regras auxiliares
@@ -456,6 +555,7 @@ inserir(P):-retract(P),!,fail.
 remover(P):-retract(P).
 
 %remove se existe de uma lista de factos
+%removeL: Lista -> {V,F}
 removeL([]).
 removeL([A|C]) :-A, remover(A), removeL(C).
 removeL([A|C]) :- removeL(C).
