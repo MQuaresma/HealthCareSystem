@@ -67,7 +67,7 @@ nao( Questao ).
 :- dynamic prestador/4.
 :- dynamic cuidado/5.
 :- dynamic instituicao/4.
-
+excecao
 %--------------------------------------------------------------------------------------------
 %defenição de regras negativas
 % utente: #IdUt, Nome, Idade, Morada -> {V,F}
@@ -174,8 +174,8 @@ excecao(prestador(26,rita,enfermagem,hospital_Coimbra)).
 
 excecao(cuidado(2017-08-02,2,4,consulta,C)):- C>=10, C=<24.
 
-excecao(27,clinica_Armandes,clinica,lisboa).
-excecao(27,clinica_Armandes,clinica,setubal).
+excecao(instituicao(27,clinica_Armandes,clinica,lisboa)).
+excecao(instituicao(27,clinica_Armandes,clinica,setubal)).
 
 %Valor Nulo Interdito (Desconhecido e não permitido conhecer)
 utente(28,zulmira,45,xpto5).
@@ -359,6 +359,30 @@ evolucao(Termo):-
     inserir(Termo),
     test(S).
 
+tipo(utente(IdU,Nome,Idade,Morada),L):-
+                        solucoes(utente(IdU,N,I,M),utente(IdU,N,I,M),L1),
+                        solucoes(-utente(IdU,N,I,M),-utente(IdU,N,I,M),L2),
+                        solucoes(excecao(utente(IdU,N,I,M)),excecao(utente(IdU,N,I,M)),L3),
+                        concatenar(L1,L2,L4),
+                        concatenar(L3,L4,L).
+
+tipo(-utente(IdU,Nome,Idade,Morada),L):-
+                        solucoes(utente(IdU,N,I,M),utente(IdU,N,I,M),L1),
+                        solucoes(-utente(IdU,N,I,M),-utente(IdU,N,I,M),L2),
+                        solucoes(excecao(utente(IdU,N,I,M)),excecao(utente(IdU,N,I,M)),L3),
+                        concatenar(L1,L2,L4),
+                        concatenar(L3,L4,L).
+
+tipo(excecao(utente(IdU,Nome,Idade,Morada)),L):-
+                        solucoes(utente(IdU,N,I,M),utente(IdU,N,I,M),L1),
+                        solucoes(utente(IdU,N,I,M),excecao(utente(IdU,N,I,M)),L2),
+                        concatenar(L1,L2,L).
+
+evolucaoLearn(Termo):-
+    tipo(Termo,L),
+    removeL(L),
+    inserir(Termo).
+
 involucao(Termo):-
     solucoes(Inv,-Termo::Inv,S),
     test(S),
@@ -384,7 +408,14 @@ inserir(P):-retract(P),!,fail.
 %remover: Termo -> {V,F}
 remover(P):-retract(P).
 
+removeL([]).
+removeL([A|C]) :- remover(A), removeL(C).
+
 %Regra de teste dos invariantes correspondentes
 %test: Lista -> {V,F}
 test([]).
 test([H|T]):-H,test(T).
+
+%concatenar duas listas
+concatenar([],L,L).
+concatenar([C|L],L1,[C|R]):-concatenar(L,L1,R).
