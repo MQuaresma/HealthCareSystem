@@ -55,7 +55,7 @@ O objetivo deste projeto é criar um sistema de representação de conhecimento 
 
 \vspace*{\fill}
 \section{Introdução}
-\textit{Health Care System} é um Sistema de Representação de Conhecimento e Raciocínio usado na caraterização de um universo na área da prestação de cuidados de saúde desenvolvido usando a linguagem de programação em lógica PROLOG. O projeto desenvolvido apresenta funcionalidades básicas associadas ao sistema em questão tendo ainda sido complementado com outras (funcionalidades) que complementam o universo em causa.
+\textit{Health Care System} é um Sistema de Representação de Conhecimento e Raciocínio usado na caraterização de um universo na área da prestação de cuidados de saúde desenvolvido usando a linguagem de programação em lógica PROLOG. A representação de conhecimento é bastante importante visto permitir-nos obter respostas a perguntas, não só de conhecimento positivo mas também de conhecimento negativo e desconhecido. Para além disso, por forma a vir a ser possivel a existência de inteligência artificial é essencial que a Base de Conhecimento possa evoluir/aprender, ou seja, por vezes um conhecimento já adquirido pode estar incorreto e é substituido por um conhecimento mais recente. Será apresentado como tal é possivel de seguida. 
 \vspace*{\fill}
 
 \newpage
@@ -70,7 +70,7 @@ A base de conhecimento do sistema desenvolvido é essencial à representação d
     \item cuidado: Data, \#IdUt, \#IdPrest, Descrição, Custo $\to$ \{V,F\}
     \item instituicao: \#IdIt, Nome, Tipo, Cidade $\to$ \{V,F\}
 \end{itemize}
-Para além disso foram contruídos regras da negação dos predicados de modo a que quando nao exista o facto negativo de uma demonstração seja possivel obter resposta, assumindo o pressuposto do mundo fechado, sendo que caso o facto exista será assumida a negação forte. Estes predicados são os seguintes:
+Para além disso foram contruídos regras da negação dos predicados de modo a que quando não exista o facto negativo de uma demonstração seja possível obter resposta, assumindo o pressuposto do mundo fechado, sendo que caso o facto exista será assumida a negação forte. Estes predicados são os seguintes:
 \begin{verbatim}
 % utente: #IdUt, Nome, Idade, Morada -> {V,F}
 -utente(IdUt, N, I, M):- nao(utente(IdUt,N,I,M)),
@@ -344,7 +344,7 @@ remover: Termo $\to$ \{V,F\}
 test: Lista $\to$ \{V,F\}
 	\item remove se existe se não existir passa ao seguinte da lista de factos
 \newline
-removeL: Lista $\to$ {V,F}
+removeL: Lista $\to$ \{V,F\}
 \end{itemize}
 
 \subsection{Evolução com aprendizagem}
